@@ -25,35 +25,39 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     setState(() => _loading = true);
-    final token = await ApiService.login(
+    final result = await ApiService.login(
       _usernameController.text.trim(),
       _passwordController.text.trim(),
     );
 
-    if (token != null) {
+    if (result.success && result.token != null) {
       final isAdmin = _usernameController.text.trim() == 'admin';
       final username = _usernameController.text.trim();
-      await SessionService.saveSession(token, username, isAdmin);
+      await SessionService.saveSession(result.token!, username, isAdmin);
 
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (_) => HomeScreen(
-            token: token,
+            token: result.token!,
             username: username,
             isAdmin: isAdmin,
           ),
         ),
       );
     } else {
+      if (!mounted) return;
       setState(() => _loading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Credenciales inválidas. Prueba con admin / Admin123!'),
+        SnackBar(
+          content: Text(result.error ?? 'Error al iniciar sesión'),
           backgroundColor: Colors.red,
+          duration: const Duration(seconds: 5),
         ),
       );
     }
+
+
   }
 
   @override
