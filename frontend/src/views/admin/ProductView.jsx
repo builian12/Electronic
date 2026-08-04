@@ -137,6 +137,7 @@ export default function ProductView() {
               </div>
             </div>
             <div className="flex gap-3 mt-4">
+              {/* #CAMBIO CRUD PRODUCTOS BOTON GUARDAR */}
               <button onClick={handleSave} className="rounded-xl bg-indigo-600 px-6 py-2 text-sm font-semibold">
                 {editingId ? 'Actualizar' : 'Crear'}
               </button>
