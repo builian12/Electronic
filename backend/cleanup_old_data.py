@@ -28,6 +28,6 @@ for table in legacy_tables:
 for user in User.objects.exclude(username__in=['admin', 'cliente']):
     user.delete()
     print(f'Usuario eliminado: {user.username}')
-    print(f'Eliminado usuario: {user.username}')
+    
 
 print('Limpieza completa. Permanecerán solo los datos del nuevo sistema.')
