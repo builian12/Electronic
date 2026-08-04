@@ -18,8 +18,7 @@ legacy_tables = [
 
 for table in legacy_tables:
     with connection.cursor() as cursor:
-        cursor.execute("SELECT to_regclass(%s)",
-                        [table])
+        cursor.execute("SELECT to_regclass(%s)", [table])
         exists = cursor.fetchone()[0]
         if exists:
             cursor.execute(f'DROP TABLE IF EXISTS {table} CASCADE;')
@@ -28,6 +27,7 @@ for table in legacy_tables:
 # Limpiar usuarios heredados y dejar solo los nuevos usuarios relevantes
 for user in User.objects.exclude(username__in=['admin', 'cliente']):
     user.delete()
+    print(f'Usuario eliminado: {user.username}')
     print(f'Eliminado usuario: {user.username}')
 
-print('Lipieza completa. Permanecerán solo los datos del nuevo sistema.')
+print('Limpieza completa. Permanecerán solo los datos del nuevo sistema.')
