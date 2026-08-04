@@ -52,6 +52,8 @@ export default function CategoriesView() {
     setShowForm(true);
   };
 
+// #DOC CRUD CATEGORIAS - ELIMINAR
+  // Pide confirmación y elimina la categoría
   const handleDelete = async (id) => {
     if (!confirm('¿Eliminar esta categoría?')) return;
     try {
