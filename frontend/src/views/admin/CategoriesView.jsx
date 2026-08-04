@@ -7,6 +7,8 @@ export default function CategoriesView() {
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
+// #DOC CRUD CATEGORIAS - CARGA DE DATOS
+  // Trae la lista de categorías desde la API
   const load = async () => {
     try {
       const res = await apiClient.get('categorias/');
@@ -18,12 +20,16 @@ export default function CategoriesView() {
 
   useEffect(() => { load(); }, []);
 
+// #DOC CRUD CATEGORIAS - LIMPIAR FORMULARIO
+  // Reinicia el formulario y cierra el modo edición/creación
   const resetForm = () => {
     setForm({ nombre: '', descripcion: '', estado: true });
     setEditingId(null);
     setShowForm(false);
   };
 
+// #DOC CRUD CATEGORIAS - GUARDAR
+  // Crea o actualiza una categoría según si hay editingId
   const handleSave = async () => {
     try {
       if (editingId) {
