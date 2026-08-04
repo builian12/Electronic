@@ -47,7 +47,7 @@ export default function Login() {
                 className="block text-sm font-bold mb-2 text-green-400"
                 htmlFor="username"
               >
-                Usuario o correo electrónico
+                Usuario o correo electronico
               </label>
               <input
                 id="username"
