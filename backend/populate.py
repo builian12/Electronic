@@ -55,7 +55,7 @@ def populate():
         )
 
     print("Creando productos...")
-    
+
     laptops = Categoria.objects.get(nombre='Laptops')
     desktops = Categoria.objects.get(nombre='Desktop')
     perifericos = Categoria.objects.get(nombre='Periféricos')
@@ -93,7 +93,7 @@ def populate():
             }
         )
 
-    print("Creando ventas de ejemplo...")
+    print("Creando ventas de ejemplo ")
     ventas = [
         (1, cliente, 1299.99, 'Completado', 'Laptop Dell Latitude', 1),
         (2, cliente, 329.40, 'Pendiente', 'Monitor 24', 2),
