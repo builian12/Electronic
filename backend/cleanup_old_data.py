@@ -29,4 +29,4 @@ for user in User.objects.exclude(username__in=['admin', 'cliente']):
     user.delete()
     print(f'Eliminado usuario: {user.username}')
 
-print('Lpieza completa. Permanecerán solo los datos del nuevo sistema.')
+print('Lipieza completa. Permanecerán solo los datos del nuevo sistema.')
