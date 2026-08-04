@@ -21,7 +21,8 @@ const load = async () => {
 
   useEffect(() => { load(); }, []);
 
-  const resetForm = () => {
+// #DOC CRUD PROVEEDORES - LIMPIAR FORMULARIO
+const resetForm = () => {
     setForm({ nombre: '', empresa: '', telefono: '', email: '', direccion: '', estado: true });
     setEditingId(null);
     setShowForm(false);
