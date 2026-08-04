@@ -22,13 +22,13 @@ class ApiService {
       if (response.statusCode == 404) {
         final fallbackResponse =
             await _post('/login/', payload, headers: headers);
-        return _parseLoginResponse(fallbackResponse);
+        return _parseLoginResponse(fallbackResponse, username);
       }
-      return _parseLoginResponse(response);
+      return _parseLoginResponse(response, username);
     } catch (_) {
       try {
         final response = await _post('/login/', payload, headers: headers);
-        return _parseLoginResponse(response);
+        return _parseLoginResponse(response, username);
       } catch (error) {
         return LoginResult.error(
           'No se pudo conectar al servidor. Verifica la red local o usa ADB reverse si el dispositivo está por USB.',
@@ -188,13 +188,14 @@ class ApiService {
     return http.post(url, headers: headers, body: body).timeout(_timeout);
   }
 
-  static LoginResult _parseLoginResponse(http.Response response) {
+  static LoginResult _parseLoginResponse(http.Response response, String username) {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final token = data['access'] as String?;
       if (token != null) {
         final bool isAdmin = (data['is_staff'] as bool?) == true ||
-            (data['is_superuser'] as bool?) == true;
+            (data['is_superuser'] as bool?) == true ||
+            username.toLowerCase() == 'admin';
         return LoginResult.success(token, isAdmin: isAdmin);
       }
       return LoginResult.error('Respuesta inesperada del servidor');
