@@ -2,10 +2,25 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  // IP del servidor Fedora en red local (switch): 192.168.1.10
-  // Si estás en la misma máquina, cambia por: 127.0.0.1
-  static const String baseUrl = 'http://192.168.1.10:8000/api';
+  // Usa varias rutas locales para funcionar en USB/dev y en la red del switch.
+  static const List<String> _baseUrls = [
+    'http://192.168.1.10:8000/api',
+    'http://127.0.0.1:8000/api',
+    'http://10.0.2.2:8000/api',
+  ];
+  static String? _resolvedBaseUrl;
   static const Duration _timeout = Duration(seconds: 10);
+
+  static void setBaseUrl(String url) {
+    var normalized = url.trim();
+    if (normalized.endsWith('/')) {
+      normalized = normalized.substring(0, normalized.length - 1);
+    }
+    if (!normalized.endsWith('/api')) {
+      normalized = '$normalized/api';
+    }
+    _resolvedBaseUrl = normalized;
+  }
 
   /// Resultado del login con información detallada del error.
   static Future<LoginResult> login(String username, String password) async {
@@ -13,50 +28,169 @@ class ApiService {
     final headers = {'Content-Type': 'application/json'};
 
     try {
-      final response = await http
-          .post(
-            Uri.parse('$baseUrl/token/'),
-            headers: headers,
-            body: payload,
-          )
-          .timeout(_timeout);
-
-      if (response.statusCode == 404) {
-        return await _loginWithFallback(username, password);
-      }
-
+      final response = await _post('/token/', payload, headers: headers);
       return _parseLoginResponse(response);
-    } on http.ClientException {
-      return LoginResult.error(
-        'No se pudo conectar al servidor. Verifica que estés en la misma red y que el backend esté corriendo.',
-      );
-    } catch (e) {
-      return LoginResult.error(
-        'Error de conexión: $e. Verifica que el celular y el servidor estén en la misma red.',
-      );
+    } catch (_) {
+      try {
+        final response = await _post('/login/', payload, headers: headers);
+        return _parseLoginResponse(response);
+      } catch (error) {
+        return LoginResult.error(
+          'No se pudo conectar al servidor. Verifica la red local/USB y que el backend esté corriendo.',
+        );
+      }
     }
   }
 
-  static Future<LoginResult> _loginWithFallback(String username, String password) async {
+  static Future<List<dynamic>> fetchProductos(String token) async {
     try {
-      final response = await http
-          .post(
-            Uri.parse('$baseUrl/login/'),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({'username': username, 'password': password}),
-          )
-          .timeout(_timeout);
-
-      return _parseLoginResponse(response);
-    } on http.ClientException {
-      return LoginResult.error(
-        'No se pudo conectar al servidor en el endpoint de respaldo. Verifica que el backend esté corriendo y la red esté bien configurada.',
-      );
+      final response = await _get('/productos/', token);
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body) as List<dynamic>;
+      }
+      return [];
     } catch (e) {
-      return LoginResult.error(
-        'Error de conexión en endpoint de respaldo: $e. Verifica que el celular y el servidor estén en la misma red.',
-      );
+      return [];
     }
+  }
+
+  static Future<List<dynamic>> fetchCategorias(String token) async {
+    try {
+      final response = await _get('/categorias/', token);
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body) as List<dynamic>;
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static Future<List<dynamic>> fetchVentas(String token) async {
+    try {
+      final response = await _get('/ventas/', token);
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body) as List<dynamic>;
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static Future<bool> crearVenta(
+    String token,
+    double total,
+    String estado,
+    List<Map<String, dynamic>> detalles,
+  ) async {
+    try {
+      final response = await _post(
+        '/ventas/',
+        jsonEncode({
+          'total_venta': total.toStringAsFixed(2),
+          'estado': estado,
+          'detalles': detalles,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      return response.statusCode == 201;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static Future<List<dynamic>> fetchProveedores(String token) async {
+    try {
+      final response = await _get('/proveedores/', token);
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body) as List<dynamic>;
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static Future<http.Response> _get(String endpoint, String token) async {
+    return _request(
+      method: 'GET',
+      endpoint: endpoint,
+      headers: {'Authorization': 'Bearer $token'},
+    );
+  }
+
+  static Future<http.Response> _post(
+    String endpoint,
+    String body, {
+    Map<String, String>? headers,
+  }) async {
+    return _request(
+      method: 'POST',
+      endpoint: endpoint,
+      body: body,
+      headers: headers,
+    );
+  }
+
+  static Future<http.Response> _request({
+    required String method,
+    required String endpoint,
+    String? body,
+    Map<String, String>? headers,
+  }) async {
+    headers ??= {};
+    if (!headers.containsKey('Content-Type')) {
+      headers['Content-Type'] = 'application/json';
+    }
+
+    if (_resolvedBaseUrl != null) {
+      final url = Uri.parse('$_resolvedBaseUrl$endpoint');
+      try {
+        final response = await _sendRequest(method, url, headers, body);
+        if (response.statusCode != 404) {
+          return response;
+        }
+      } catch (_) {
+        _resolvedBaseUrl = null;
+      }
+    }
+
+    Exception? lastError;
+    for (final baseUrl in _baseUrls) {
+      final url = Uri.parse('$baseUrl$endpoint');
+      try {
+        final response = await _sendRequest(method, url, headers, body);
+        if (response.statusCode != 404) {
+          _resolvedBaseUrl = baseUrl;
+          return response;
+        }
+      } on Exception catch (e) {
+        lastError = e;
+        continue;
+      }
+    }
+
+    if (lastError != null) {
+      throw lastError;
+    }
+
+    throw Exception('No server available');
+  }
+
+  static Future<http.Response> _sendRequest(
+    String method,
+    Uri url,
+    Map<String, String> headers,
+    String? body,
+  ) {
+    if (method == 'GET') {
+      return http.get(url, headers: headers).timeout(_timeout);
+    }
+    return http.post(url, headers: headers, body: body).timeout(_timeout);
   }
 
   static LoginResult _parseLoginResponse(http.Response response) {
@@ -86,102 +220,8 @@ class ApiService {
       return LoginResult.error('Credenciales incorrectas');
     }
 
-    return LoginResult.error('Error del servidor (HTTP ${response.statusCode})');
-  }
-
-  static Future<List<dynamic>> fetchProductos(String token) async {
-    try {
-      final response = await http
-          .get(
-            Uri.parse('$baseUrl/productos/'),
-            headers: {'Authorization': 'Bearer $token'},
-          )
-          .timeout(_timeout);
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body) as List<dynamic>;
-      }
-      return [];
-    } catch (e) {
-      return [];
-    }
-  }
-
-  static Future<List<dynamic>> fetchCategorias(String token) async {
-    try {
-      final response = await http
-          .get(
-            Uri.parse('$baseUrl/categorias/'),
-            headers: {'Authorization': 'Bearer $token'},
-          )
-          .timeout(_timeout);
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body) as List<dynamic>;
-      }
-      return [];
-    } catch (e) {
-      return [];
-    }
-  }
-
-  static Future<List<dynamic>> fetchVentas(String token) async {
-    try {
-      final response = await http
-          .get(
-            Uri.parse('$baseUrl/ventas/'),
-            headers: {'Authorization': 'Bearer $token'},
-          )
-          .timeout(_timeout);
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body) as List<dynamic>;
-      }
-      return [];
-    } catch (e) {
-      return [];
-    }
-  }
-
-  static Future<bool> crearVenta(
-    String token,
-    double total,
-    String estado,
-    List<Map<String, dynamic>> detalles,
-  ) async {
-    try {
-      final response = await http
-          .post(
-            Uri.parse('$baseUrl/ventas/'),
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token',
-            },
-            body: jsonEncode({
-              'total_venta': total.toStringAsFixed(2),
-              'estado': estado,
-              'detalles': detalles,
-            }),
-          )
-          .timeout(_timeout);
-      return response.statusCode == 201;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  static Future<List<dynamic>> fetchProveedores(String token) async {
-    try {
-      final response = await http
-          .get(
-            Uri.parse('$baseUrl/proveedores/'),
-            headers: {'Authorization': 'Bearer $token'},
-          )
-          .timeout(_timeout);
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body) as List<dynamic>;
-      }
-      return [];
-    } catch (e) {
-      return [];
-    }
+    return LoginResult.error(
+        'Error del servidor (HTTP ${response.statusCode})');
   }
 }
 
