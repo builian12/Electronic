@@ -1,10 +1,10 @@
 import React from 'react';
 
 const stats = [
-  { title: 'Ventas hoy', value: '$ 6,240', icon: 'fas fa-money-bill-wave', color: 'bg-emerald-500' },
-  { title: 'Productos activos', value: '24', icon: 'fas fa-box', color: 'bg-sky-500' },
-  { title: 'Stock bajo', value: '3', icon: 'fas fa-exclamation-triangle', color: 'bg-amber-500' },
-  { title: 'Usuarios', value: '18', icon: 'fas fa-users', color: 'bg-violet-500' },
+  { title: 'Ventas del mes', value: '$ 8,640', icon: 'fas fa-money-bill-wave', color: 'bg-emerald-500' },
+  { title: 'Productos activos', value: '5', icon: 'fas fa-box', color: 'bg-sky-500' },
+  { title: 'Proveedores', value: '2', icon: 'fas fa-truck', color: 'bg-fuchsia-500' },
+  { title: 'Usuarios', value: '2', icon: 'fas fa-users', color: 'bg-violet-500' },
 ];
 
 const recentSales = [
@@ -74,6 +74,7 @@ export default function DashboardView() {
             <div className="space-y-3 text-sm">
               <a href="/dashboard/productos" className="block rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3 hover:border-sky-500">Gestionar productos</a>
               <a href="/dashboard/ventas" className="block rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3 hover:border-sky-500">Ver ventas</a>
+              <a href="/dashboard/proveedores" className="block rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3 hover:border-sky-500">Administrar proveedores</a>
               <a href="/dashboard/usuarios" className="block rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3 hover:border-sky-500">Administrar usuarios</a>
             </div>
           </div>

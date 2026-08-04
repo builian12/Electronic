@@ -11,6 +11,7 @@ export default function Sidebar() {
     { to: "/dashboard", icon: "fas fa-tv", label: "Panel principal" },
     { to: "/dashboard/productos", icon: "fas fa-box", label: "Productos" },
     { to: "/dashboard/ventas", icon: "fas fa-cash-register", label: "Ventas" },
+    { to: "/dashboard/proveedores", icon: "fas fa-truck", label: "Proveedores" },
     { to: "/dashboard/usuarios", icon: "fas fa-users", label: "Usuarios" },
   ];
 

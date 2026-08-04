@@ -13,6 +13,7 @@ import FooterAdmin from "components/Footers/FooterAdmin";
 import DashboardView from "views/admin/DashboardView";
 import ProductView from "views/admin/ProductView";
 import SalesView from "views/admin/SalesView";
+import SuppliersView from "views/admin/SuppliersView";
 
 export default function Admin() {
   return (
@@ -27,6 +28,7 @@ export default function Admin() {
             <Route path="/dashboard" exact component={DashboardView} />
             <Route path="/dashboard/productos" exact component={ProductView} />
             <Route path="/dashboard/ventas" exact component={SalesView} />
+            <Route path="/dashboard/proveedores" exact component={SuppliersView} />
             <Redirect from="/admin" to="/dashboard" />
           </Switch>
           <FooterAdmin />

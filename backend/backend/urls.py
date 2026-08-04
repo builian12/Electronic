@@ -30,8 +30,11 @@ urlpatterns = [
     path('api/categorias/', include('categorias.urls')),
     path('api/productos/', include('productos.urls')),
     path('api/ventas/', include('ventas.urls')),
+    path('api/proveedores/', include('proveedores.urls')),
+    path('api/clientes/', include('clientes.urls')),
 
     #SWAGGER
+
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
