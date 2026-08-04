@@ -91,7 +91,7 @@ export default function Login() {
           
           <div className="mt-8 text-center border-t border-gray-800 pt-6">
             <p className="text-green-500 text-sm font-medium">
-              ¿No tienes una cuenta? <Link to="/auth/register" className="text-green-400 hover:text-green-300 underline transition-colors">Registrarse</Link>
+              ¿No cuenta con una cuenta? <Link to="/auth/register" className="text-green-400 hover:text-green-300 underline transition-colors">Registrarse</Link>
             </p>
           </div>
         </div>
