@@ -22,7 +22,7 @@ for table in legacy_tables:
         exists = cursor.fetchone()[0]
         if exists:
             cursor.execute(f'DROP TABLE IF EXISTS {table} CASCADE;')
-            print(f'Eliminada tabla: {table}')
+            print(f'Tabla eliminada: {table}')
 
 # Limpiar usuarios heredados y dejar solo los nuevos usuarios relevantes
 for user in User.objects.exclude(username__in=['admin', 'cliente']):
