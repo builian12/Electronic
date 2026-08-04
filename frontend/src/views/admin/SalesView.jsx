@@ -106,7 +106,8 @@ const addDetail = () => {
     setForm({ ...form, detalles: form.detalles.filter((_, i) => i !== idx) });
   };
 
-  const updateDetail = (idx, field, value) => {
+// #DOC CRUD VENTAS - CALCULAR SUBTOTAL Y TOTAL
+const updateDetail = (idx, field, value) => {
     const updated = form.detalles.map((d, i) => {
       if (i !== idx) return d;
       const next = { ...d, [field]: value };
