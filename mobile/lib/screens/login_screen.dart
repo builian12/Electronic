@@ -18,6 +18,20 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _loading = false;
   bool _obscure = true;
 
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedServerUrl();
+  }
+
+  Future<void> _loadSavedServerUrl() async {
+    final savedUrl = await SessionService.getServerUrl();
+    if (savedUrl != null && savedUrl.isNotEmpty) {
+      _serverController.text = savedUrl;
+      ApiService.setBaseUrl(savedUrl);
+    }
+  }
+
   Future<void> _login() async {
     final serverUrl = _serverController.text.trim();
     if (serverUrl.isNotEmpty) {
@@ -161,6 +175,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         border: OutlineInputBorder(),
                       ),
                       textInputAction: TextInputAction.next,
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Si usas celular físico por USB y no tienes red, ejecuta en la PC:\nadb reverse tcp:8000 tcp:8000 y usa 127.0.0.1:8000/api',
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                     const SizedBox(height: 16),
                     TextField(

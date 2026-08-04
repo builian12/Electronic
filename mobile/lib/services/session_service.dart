@@ -1,11 +1,23 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SessionService {
+  static const _serverUrlKey = 'serverUrl';
+
   static Future<void> saveSession(String token, String username, bool isAdmin) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('token', token);
     await prefs.setString('username', username);
     await prefs.setBool('isAdmin', isAdmin);
+  }
+
+  static Future<void> saveServerUrl(String serverUrl) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_serverUrlKey, serverUrl);
+  }
+
+  static Future<String?> getServerUrl() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_serverUrlKey);
   }
 
   static Future<String?> getToken() async {

@@ -1,48 +1,81 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'session_service.dart';
 
 class ApiService {
   // Usa varias rutas locales para funcionar en USB/dev y en la red del switch.
   static const List<String> _baseUrls = [
     'http://192.168.1.10:8000/api',
     'http://127.0.0.1:8000/api',
+    'http://localhost:8000/api',
     'http://10.0.2.2:8000/api',
+    'http://10.0.3.2:8000/api',
   ];
   static String? _resolvedBaseUrl;
   static const Duration _timeout = Duration(seconds: 10);
 
+  static Future<void> _ensureBaseUrl() async {
+    if (_resolvedBaseUrl != null && _resolvedBaseUrl!.isNotEmpty) return;
+    final savedUrl = await SessionService.getServerUrl();
+    if (savedUrl != null && savedUrl.isNotEmpty) {
+      final normalized = _normalizeBaseUrl(savedUrl);
+      if (normalized.isNotEmpty) {
+        _resolvedBaseUrl = normalized;
+        return;
+      }
+    }
+  }
+
   static void setBaseUrl(String url) {
+    _resolvedBaseUrl = _normalizeBaseUrl(url);
+  }
+
+  static String _normalizeBaseUrl(String url) {
     var normalized = url.trim();
+    if (normalized.isEmpty) return '';
+    if (!normalized.startsWith('http://') && !normalized.startsWith('https://')) {
+      normalized = 'http://$normalized';
+    }
     if (normalized.endsWith('/')) {
       normalized = normalized.substring(0, normalized.length - 1);
     }
     if (!normalized.endsWith('/api')) {
       normalized = '$normalized/api';
     }
-    _resolvedBaseUrl = normalized;
+    return normalized;
   }
 
   /// Resultado del login con información detallada del error.
   static Future<LoginResult> login(String username, String password) async {
     final payload = jsonEncode({'username': username, 'password': password});
     final headers = {'Content-Type': 'application/json'};
+    await _ensureBaseUrl();
 
     try {
       final response = await _post('/token/', payload, headers: headers);
-      return _parseLoginResponse(response);
+      final result = _parseLoginResponse(response);
+      if (result.success && _resolvedBaseUrl != null) {
+        await SessionService.saveServerUrl(_resolvedBaseUrl!);
+      }
+      return result;
     } catch (_) {
       try {
         final response = await _post('/login/', payload, headers: headers);
-        return _parseLoginResponse(response);
+        final result = _parseLoginResponse(response);
+        if (result.success && _resolvedBaseUrl != null) {
+          await SessionService.saveServerUrl(_resolvedBaseUrl!);
+        }
+        return result;
       } catch (error) {
         return LoginResult.error(
-          'No se pudo conectar al servidor. Verifica la red local/USB y que el backend esté corriendo.',
+          'No se pudo conectar al servidor. Verifica la IP/host, la red local o usa ADB reverse si el dispositivo está por USB.',
         );
       }
     }
   }
 
   static Future<List<dynamic>> fetchProductos(String token) async {
+    await _ensureBaseUrl();
     try {
       final response = await _get('/productos/', token);
       if (response.statusCode == 200) {
@@ -55,6 +88,7 @@ class ApiService {
   }
 
   static Future<List<dynamic>> fetchCategorias(String token) async {
+    await _ensureBaseUrl();
     try {
       final response = await _get('/categorias/', token);
       if (response.statusCode == 200) {
@@ -67,6 +101,7 @@ class ApiService {
   }
 
   static Future<List<dynamic>> fetchVentas(String token) async {
+    await _ensureBaseUrl();
     try {
       final response = await _get('/ventas/', token);
       if (response.statusCode == 200) {
@@ -84,6 +119,7 @@ class ApiService {
     String estado,
     List<Map<String, dynamic>> detalles,
   ) async {
+    await _ensureBaseUrl();
     try {
       final response = await _post(
         '/ventas/',
@@ -104,6 +140,7 @@ class ApiService {
   }
 
   static Future<List<dynamic>> fetchProveedores(String token) async {
+    await _ensureBaseUrl();
     try {
       final response = await _get('/proveedores/', token);
       if (response.statusCode == 200) {
