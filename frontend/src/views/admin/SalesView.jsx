@@ -93,7 +93,8 @@ const handleSave = async () => {
     }
   };
 
-  const addDetail = () => {
+// #DOC CRUD VENTAS - AGREGAR DETALLE DE PRODUCTO
+const addDetail = () => {
     setForm({
       ...form,
       detalles: [...form.detalles, { producto: '', cantidad: 1, precio_unitario_historico: '', subtotal: '' }],
