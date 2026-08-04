@@ -22,10 +22,10 @@ for table in legacy_tables:
         if exists:
             cursor.execute(f'DROP TABLE IF EXISTS {table} CASCADE;')
             print(f'Tabla eliminada: {table}')
+
 # Limpiar usuarios heredados y dejar solo los nuevos usuarios relevantes
 for user in User.objects.exclude(username__in=['admin', 'cliente']):
     user.delete()
     print(f'Usuario eliminado: {user.username}')
-    
 
 print('Limpieza completa. Permanecerán solo los datos del nuevo sistema.')
