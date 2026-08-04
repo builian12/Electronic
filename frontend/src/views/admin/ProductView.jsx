@@ -25,7 +25,9 @@ export default function ProductView() {
       console.error('Error al cargar productos', err);
     }
   };
-
+  
+// #TODO CRUD PRODUCTOS - ESTADO DE CARGA
+  // Pendiente: mostrar un indicador "Cargando..." mientras load() trae los datos
   useEffect(() => { load(); }, []);
 
 // #DOC CRUD PRODUCTOS - LIMPIAR FORMULARIO
