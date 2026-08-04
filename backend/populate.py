@@ -10,7 +10,6 @@ from productos.models import Producto
 from ventas.models import Venta, DetalleVenta
 from proveedores.models import Proveedor
 
-
 def populate():
     print("Creando usuarios...")
     admin, _ = User.objects.get_or_create(username='admin')
@@ -80,7 +79,7 @@ def populate():
         ("Impresora Láser HP", "Blanco y negro dúplex", 249.99, 5, impresoras),
         ("Audífonos Bluetooth Sony", "Cancelación de ruido", 199.99, 14, perifericos),
     ]
-
+    
     for nombre, descripcion, precio, stock, categoria in productos:
         Producto.objects.get_or_create(
             nombre=nombre,
@@ -102,6 +101,7 @@ def populate():
         (5, cliente, 309.98, 'Pendiente', 'Teclado Mecánico RGB', 3),
         (6, admin, 279.97, 'Completado', 'Router WiFi 6 AX3000', 3),
     ]
+
     for venta_id, usuario, total, estado, producto_nombre, cantidad in ventas:
         venta, _ = Venta.objects.get_or_create(
             id=venta_id,
