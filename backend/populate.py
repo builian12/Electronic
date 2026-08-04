@@ -55,6 +55,7 @@ def populate():
         )
 
     print("Creando productos...")
+    
     laptops = Categoria.objects.get(nombre='Laptops')
     desktops = Categoria.objects.get(nombre='Desktop')
     perifericos = Categoria.objects.get(nombre='Periféricos')
