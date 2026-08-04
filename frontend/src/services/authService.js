@@ -8,7 +8,8 @@ export const login = async (username, password) => {
   if (response.data.access) {
     localStorage.setItem("token", response.data.access);
     localStorage.setItem("username", username);
-    localStorage.setItem("role", username === "admin" ? "admin" : "cliente");
+    const isAdmin = response.data.is_staff === true || response.data.is_superuser === true;
+    localStorage.setItem("role", isAdmin ? "admin" : "cliente");
   }
   return response.data;
 };
