@@ -44,7 +44,8 @@ const handleSave = async () => {
     }
   };
 
-  const handleEdit = (u) => {
+// #DOC CRUD USUARIOS - EDITAR
+const handleEdit = (u) => {
     setForm({
       username: u.username, email: u.email || '', first_name: u.first_name || '',
       last_name: u.last_name || '', password: '',
