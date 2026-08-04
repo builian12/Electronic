@@ -18,7 +18,8 @@ legacy_tables = [
 
 for table in legacy_tables:
     with connection.cursor() as cursor:
-        cursor.execute("SELECT to_regclass(%s)", [table])
+        cursor.execute("SELECT to_regclass(%s)",
+                        [table])
         exists = cursor.fetchone()[0]
         if exists:
             cursor.execute(f'DROP TABLE IF EXISTS {table} CASCADE;')
