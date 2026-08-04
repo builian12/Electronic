@@ -39,7 +39,8 @@ const load = async () => {
     setShowForm(false);
   };
 
-  const handleSave = async () => {
+// #DOC CRUD VENTAS - GUARDAR
+const handleSave = async () => {
     try {
       const payload = {
         usuario: form.usuario,
