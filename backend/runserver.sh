@@ -9,5 +9,11 @@ fi
 
 export DB_HOST="${DB_HOST:-127.0.0.1}"
 echo "Usando DB_HOST=$DB_HOST"
+echo "Ejecutando migraciones de Django..."
+python3 manage.py migrate --noinput
+
+echo "Creando usuarios y datos iniciales..."
+python3 populate.py
+
 echo "Iniciando backend Django en 0.0.0.0:8000..."
 python3 manage.py runserver 0.0.0.0:8000
