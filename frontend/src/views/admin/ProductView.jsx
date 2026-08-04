@@ -32,6 +32,8 @@ export default function ProductView() {
     setShowForm(false);
   };
 
+// #CAMBIO CRUD PRODUCTOS BOTON GUARDAR
+  // Aquí está la función que ejecuta el botón "Guardar" (Crear/Actualizar producto)
   const handleSave = async () => {
     try {
       const payload = { ...form };
