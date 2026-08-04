@@ -19,7 +19,7 @@ export default function Login() {
       await login(username, password);
       history.push("/dashboard");
     } catch (err) {
-      setError("Usuario o contraseña incorrectos");
+      setError("El Usuario o contraseña incorrectos");
       setLoading(false);
     }
   };
