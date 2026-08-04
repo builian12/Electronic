@@ -27,7 +27,8 @@ const load = async () => {
     setShowForm(false);
   };
 
-  const handleSave = async () => {
+// #DOC CRUD USUARIOS - GUARDAR (maneja password opcional en edicion)
+const handleSave = async () => {
     try {
       const payload = { ...form };
       if (editingId && !payload.password) delete payload.password;
