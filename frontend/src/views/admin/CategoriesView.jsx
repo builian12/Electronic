@@ -44,6 +44,8 @@ export default function CategoriesView() {
     }
   };
 
+// #DOC CRUD CATEGORIAS - EDITAR
+  // Carga los datos de la categoría seleccionada en el formulario
   const handleEdit = (cat) => {
     setForm({ nombre: cat.nombre, descripcion: cat.descripcion || '', estado: cat.estado });
     setEditingId(cat.id);
