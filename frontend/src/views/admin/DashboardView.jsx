@@ -14,7 +14,8 @@ export default function DashboardView() {
   const [recentSales, setRecentSales] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const load = async () => {
+// #DOC DASHBOARD - CARGA DE ESTADISTICAS
+const load = async () => {
     try {
       const [ventasRes, productosRes, proveedoresRes, clientesRes, usuariosRes, categoriasRes] = await Promise.all([
         apiClient.get('ventas/'),
