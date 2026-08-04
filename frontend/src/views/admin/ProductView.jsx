@@ -50,6 +50,8 @@ export default function ProductView() {
       }
       resetForm();
       load();
+      // #TODO CRUD PRODUCTOS - MENSAJE DE EXITO
+      // Pendiente: mostrar notificación "Producto guardado correctamente" al usuario
     } catch (err) {
       console.error('Error al guardar producto', err);
     }
