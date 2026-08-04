@@ -9,7 +9,8 @@ export default function ClientsView() {
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
-  const load = async () => {
+// #DOC CRUD CLIENTES - CARGA DE DATOS
+const load = async () => {
     try {
       const res = await apiClient.get('clientes/');
       setClients(res.data);
@@ -20,13 +21,15 @@ export default function ClientsView() {
 
   useEffect(() => { load(); }, []);
 
-  const resetForm = () => {
+// #DOC CRUD CLIENTES - LIMPIAR FORMULARIO
+const resetForm = () => {
     setForm({ nombre: '', apellido: '', telefono: '', email: '', direccion: '', ciudad: '', estado: true });
     setEditingId(null);
     setShowForm(false);
   };
 
-  const handleSave = async () => {
+// #DOC CRUD CLIENTES - GUARDAR
+const handleSave = async () => {
     try {
       if (editingId) {
         await apiClient.put(`clientes/${editingId}/`, form);
@@ -40,7 +43,8 @@ export default function ClientsView() {
     }
   };
 
-  const handleEdit = (c) => {
+// #DOC CRUD CLIENTES - EDITAR
+const handleEdit = (c) => {
     setForm({
       nombre: c.nombre, apellido: c.apellido || '', telefono: c.telefono || '',
       email: c.email || '', direccion: c.direccion || '', ciudad: c.ciudad || '',
