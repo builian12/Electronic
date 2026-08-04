@@ -55,7 +55,8 @@ const handleEdit = (u) => {
     setShowForm(true);
   };
 
-  const handleDelete = async (id) => {
+// #DOC CRUD USUARIOS - ELIMINAR
+const handleDelete = async (id) => {
     if (!confirm('¿Eliminar este usuario?')) return;
     try {
       await apiClient.delete(`users/${id}/`);
