@@ -94,6 +94,7 @@ export default function CardTable({ color }) {
               </tr>
             </thead>
             <tbody>
+              {/* Row 1 - Argon */}
               <tr>
                 <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center">
                   <img
@@ -118,26 +119,10 @@ export default function CardTable({ color }) {
                 </td>
                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                   <div className="flex">
-                    <img
-                      src={"/assets/img/team-1-800x800.jpg"}
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow"
-                    ></img>
-                    <img
-                      src={"/assets/img/team-2-800x800.jpg"}
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"
-                    ></img>
-                    <img
-                      src={"/assets/img/team-3-800x800.jpg"}
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"
-                    ></img>
-                    <img
-                      src={"/assets/img/team-4-470x470.png"}
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"
-                    ></img>
+                    <div className="w-10 h-10 rounded-full bg-sky-500 flex items-center justify-center border-2 border-slate-700 shadow text-white text-xs font-bold">JD</div>
+                    <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center border-2 border-slate-700 shadow -ml-4 text-white text-xs font-bold">AM</div>
+                    <div className="w-10 h-10 rounded-full bg-fuchsia-500 flex items-center justify-center border-2 border-slate-700 shadow -ml-4 text-white text-xs font-bold">LR</div>
+                    <div className="w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center border-2 border-slate-700 shadow -ml-4 text-white text-xs font-bold">CK</div>
                   </div>
                 </td>
                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
@@ -157,6 +142,7 @@ export default function CardTable({ color }) {
                   <TableDropdown />
                 </td>
               </tr>
+              {/* Row 2 - Angular */}
               <tr>
                 <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center">
                   <img
@@ -182,26 +168,10 @@ export default function CardTable({ color }) {
                 </td>
                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                   <div className="flex">
-                    <img
-                      src={"/assets/img/team-1-800x800.jpg"}
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow"
-                    ></img>
-                    <img
-                      src={"/assets/img/team-2-800x800.jpg"}
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"
-                    ></img>
-                    <img
-                      src={"/assets/img/team-3-800x800.jpg"}
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"
-                    ></img>
-                    <img
-                      src={"/assets/img/team-4-470x470.png"}
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"
-                    ></img>
+                    <div className="w-10 h-10 rounded-full bg-rose-500 flex items-center justify-center border-2 border-slate-700 shadow text-white text-xs font-bold">TP</div>
+                    <div className="w-10 h-10 rounded-full bg-cyan-500 flex items-center justify-center border-2 border-slate-700 shadow -ml-4 text-white text-xs font-bold">MS</div>
+                    <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center border-2 border-slate-700 shadow -ml-4 text-white text-xs font-bold">BR</div>
+                    <div className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center border-2 border-slate-700 shadow -ml-4 text-white text-xs font-bold">NG</div>
                   </div>
                 </td>
                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
@@ -221,6 +191,7 @@ export default function CardTable({ color }) {
                   <TableDropdown />
                 </td>
               </tr>
+              {/* Row 3 - Sketch */}
               <tr>
                 <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center">
                   <img
@@ -245,26 +216,10 @@ export default function CardTable({ color }) {
                 </td>
                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                   <div className="flex">
-                    <img
-                      src={"/assets/img/team-1-800x800.jpg"}
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow"
-                    ></img>
-                    <img
-                      src={"/assets/img/team-2-800x800.jpg"}
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"
-                    ></img>
-                    <img
-                      src={"/assets/img/team-3-800x800.jpg"}
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"
-                    ></img>
-                    <img
-                      src={"/assets/img/team-4-470x470.png"}
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"
-                    ></img>
+                    <div className="w-10 h-10 rounded-full bg-teal-500 flex items-center justify-center border-2 border-slate-700 shadow text-white text-xs font-bold">DV</div>
+                    <div className="w-10 h-10 rounded-full bg-violet-500 flex items-center justify-center border-2 border-slate-700 shadow -ml-4 text-white text-xs font-bold">RC</div>
+                    <div className="w-10 h-10 rounded-full bg-pink-500 flex items-center justify-center border-2 border-slate-700 shadow -ml-4 text-white text-xs font-bold">GH</div>
+                    <div className="w-10 h-10 rounded-full bg-lime-500 flex items-center justify-center border-2 border-slate-700 shadow -ml-4 text-white text-xs font-bold">WQ</div>
                   </div>
                 </td>
                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
@@ -284,6 +239,7 @@ export default function CardTable({ color }) {
                   <TableDropdown />
                 </td>
               </tr>
+              {/* Row 4 - React */}
               <tr>
                 <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center">
                   <img
@@ -309,26 +265,10 @@ export default function CardTable({ color }) {
                 </td>
                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                   <div className="flex">
-                    <img
-                      src={"/assets/img/team-1-800x800.jpg"}
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow"
-                    ></img>
-                    <img
-                      src={"/assets/img/team-2-800x800.jpg"}
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"
-                    ></img>
-                    <img
-                      src={"/assets/img/team-3-800x800.jpg"}
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"
-                    ></img>
-                    <img
-                      src={"/assets/img/team-4-470x470.png"}
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"
-                    ></img>
+                    <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center border-2 border-slate-700 shadow text-white text-xs font-bold">KL</div>
+                    <div className="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center border-2 border-slate-700 shadow -ml-4 text-white text-xs font-bold">PY</div>
+                    <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center border-2 border-slate-700 shadow -ml-4 text-white text-xs font-bold">FJ</div>
+                    <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center border-2 border-slate-700 shadow -ml-4 text-white text-xs font-bold">ZT</div>
                   </div>
                 </td>
                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
@@ -348,6 +288,7 @@ export default function CardTable({ color }) {
                   <TableDropdown />
                 </td>
               </tr>
+              {/* Row 5 - Vue */}
               <tr>
                 <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center">
                   <img
@@ -361,7 +302,7 @@ export default function CardTable({ color }) {
                       +(color === "light" ? "text-blueGray-600" : "text-white")
                     }
                   >
-                    React Material Dashboard
+                    Vue Paper Dashboard
                   </span>
                 </th>
                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
@@ -373,26 +314,10 @@ export default function CardTable({ color }) {
                 </td>
                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                   <div className="flex">
-                    <img
-                      src={"/assets/img/team-1-800x800.jpg"}
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow"
-                    ></img>
-                    <img
-                      src={"/assets/img/team-2-800x800.jpg"}
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"
-                    ></img>
-                    <img
-                      src={"/assets/img/team-3-800x800.jpg"}
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"
-                    ></img>
-                    <img
-                      src={"/assets/img/team-4-470x470.png"}
-                      alt="..."
-                      className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"
-                    ></img>
+                    <div className="w-10 h-10 rounded-full bg-yellow-500 flex items-center justify-center border-2 border-slate-700 shadow text-white text-xs font-bold">MN</div>
+                    <div className="w-10 h-10 rounded-full bg-sky-500 flex items-center justify-center border-2 border-slate-700 shadow -ml-4 text-white text-xs font-bold">HB</div>
+                    <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center border-2 border-slate-700 shadow -ml-4 text-white text-xs font-bold">VC</div>
+                    <div className="w-10 h-10 rounded-full bg-fuchsia-500 flex items-center justify-center border-2 border-slate-700 shadow -ml-4 text-white text-xs font-bold">DX</div>
                   </div>
                 </td>
                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">

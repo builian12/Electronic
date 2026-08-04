@@ -1,0 +1,221 @@
+GUIA RAPIDA: MODELO CLIENTE-SERVIDOR EN DJANGO + FRONTEND
+=========================================================
+
+Objetivo:
+- El servidor (Fedora Linux) va a correr la API de Django.
+- El cliente (frontend React/Vite) se conecta al servidor usando una IP y un puerto.
+- La comunicacion se hace por red local o por Internet, dependiendo de la IP que uses.
+
+1) QUE ES LO BASICO DEL MODELO CLIENTE-SERVIDOR
+-----------------------------------------------
+- Cliente: la parte que usa el usuario (frontend, navegador, React/Vite).
+- Servidor: la parte que procesa datos y responde (Django + API REST).
+- IP: direccion del servidor en la red.
+- Puerto: entrada de servicio, ejemplo 8000 para Django, 5173 para Vite.
+
+Ejemplo de estructura:
+- Servidor = 192.168.1.50
+- Puerto backend Django = 8000
+- Puerto frontend Vite = 5173
+
+Entonces el cliente hace una llamada como:
+- http://192.168.1.50:8000/api/disqueras/
+
+2) LO QUE HAY QUE PONER EN EL CODIGO
+--------------------------------------
+
+A) En el backend (Django) para permitir conexiones desde otra IP
+Archivo: backend/backend/settings.py
+
+Agregar esto:
+
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '0.0.0.0',
+    '192.168.1.50',   # IP del servidor
+    'tu-ip-publica.com'
+]
+
+INSTALLED_APPS = [
+    ...,
+    'corsheaders',
+]
+
+MIDDLEWARE = [
+    ...,
+    'corsheaders.middleware.CorsMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'http://192.168.1.50:5173',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'http://192.168.1.50:5173',
+]
+
+Si usas el frontend en otra maquina de la red, cambia 192.168.1.50 por la IP del servidor.
+
+B) En el frontend (React/Vite) para apuntar al backend
+Archivo: frontend/src/services/api.jsx
+
+Cambiar la base URL a la IP del servidor:
+
+const API_URL = 'http://192.168.1.50:8000/api';
+
+Ejemplo:
+
+export default axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+Si usas token JWT:
+
+const token = localStorage.getItem('token');
+
+axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+C) Si el frontend se va a servir desde el servidor
+El frontend puede correr con Vite en el puerto 5173, o puedes usar un build de produccion con Nginx.
+
+3) COMO FUNCIONA LA CONEXION
+----------------------------
+Ejemplo real:
+- El cliente abre la pagina en:
+  http://192.168.1.50:5173
+- El frontend hace peticiones a:
+  http://192.168.1.50:8000/api/disqueras/
+
+Si la IP del servidor cambia, entonces todo el frontend debe apuntar a la nueva IP.
+
+4) QUE HAY QUE HACER EN EL SERVIDOR (FEDORA LINUX)
+----------------------------------------------------
+A) Instalar dependencias basicas
+
+sudo dnf update -y
+sudo dnf install -y python3 python3-pip python3-venv git nginx firewalld
+
+B) Crear el proyecto o entrar al repo
+
+cd /home/tu-usuario
+git clone <url-del-repo>
+cd djangorest
+
+C) Crear entorno virtual
+
+python3 -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install django djangorestframework django-cors-headers gunicorn
+
+D) Instalar dependencias del proyecto
+
+pip install -r requirements.txt
+
+Si no tienes requirements.txt, instala los paquetes necesarios manualmente.
+
+E) Configurar la base de datos
+
+cd backend
+python manage.py migrate
+python manage.py createsuperuser
+
+F) Ejecutar el backend en el puerto 8000
+
+python manage.py runserver 0.0.0.0:8000
+
+O mejor en produccion usando Gunicorn:
+
+gunicorn backend.wsgi:application --bind 0.0.0.0:8000
+
+G) Abrir puertos en el firewall
+
+sudo firewall-cmd --permanent --add-port=8000/tcp
+sudo firewall-cmd --permanent --add-port=5173/tcp
+sudo firewall-cmd --reload
+
+H) Si quieres usar Nginx como proxy inverso
+1. Instala Nginx
+2. Crea un archivo de configuracion en:
+   /etc/nginx/conf.d/tuapp.conf
+
+Ejemplo:
+
+server {
+    listen 80;
+    server_name 192.168.1.50;
+
+    location /api/ {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+Luego recarga Nginx:
+
+sudo nginx -t
+sudo systemctl restart nginx
+
+5) PUERTOS IMPORTANTES
+---------------------
+- 8000: Django API
+- 5173: frontend Vite (solo desarrollo)
+- 80: HTTP general con Nginx
+- 443: HTTPS (si usas certificado SSL)
+
+6) RECOMENDACION PRACTICA
+------------------------
+Para que funcione bien en una red local o en Internet:
+- El backend debe estar escuchando en 0.0.0.0:8000
+- El frontend debe apuntar a la IP correcta del servidor
+- En Django debes permitir CORS y tu IP en ALLOWED_HOSTS
+- En Fedora Linux, abre el firewall para esos puertos
+- Si vas a usar el frontend desde una IP remota, usa Nginx + HTTPS
+
+7) EJEMPLO RESUMIDO DE CONFIGURACION
+------------------------------------
+Backend:
+- Servidor: 192.168.1.50
+- Puerto: 8000
+- URL API: http://192.168.1.50:8000/api
+
+Frontend:
+- URL base en el codigo: http://192.168.1.50:8000/api
+
+8) NOTA IMPORTANTE
+------------------
+Si tu servidor tiene IP publica, no uses la IP privada en el cliente final. Usa la IP publica o un dominio.
+
+Si tu servidor es local y el cliente tambien esta en tu red, la IP privada sirve.
+
+9) COMANDOS BASICOS DE VERIFICACION
+-----------------------------------
+- Ver la IP actual del servidor:
+  hostname -I
+
+- Comprobar si el puerto esta abierto:
+  ss -lntp | grep 8000
+
+- Ver logs de Django:
+  tail -f backend/logs/error.log
+
+- Reiniciar el servicio si usas systemd:
+  sudo systemctl restart nginx
+
+10) RESUMEN EN UNA LINEA
+------------------------
+El cliente se conecta al servidor usando una IP + puerto, y el servidor responde con JSON, por ejemplo:
+http://192.168.1.50:8000/api/disqueras/
+
+FIN DE LA GUIA.

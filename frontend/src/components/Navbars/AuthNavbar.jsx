@@ -37,11 +37,11 @@ export default function Navbar(props) {
             <ul className="flex flex-col lg:flex-row list-none mr-auto">
               <li className="flex items-center">
                 <a
-                  className="lg:text-white lg:hover:text-blueGray-200 text-blueGray-700 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
+                  className="lg:text-white lg:hover:text-gray-200 text-gray-700 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
                   href="https://www.creative-tim.com/learning-lab/tailwind/react/overview/notus?ref=nr-index-navbar&_ga=2.214833492.235871103.1753154769-1688634302.1752550566"
                   target="_blank"
                 >
-                  <i className="lg:text-blueGray-200 text-blueGray-400 far fa-file-alt text-lg leading-lg mr-2" />{" "}
+                  <i className="lg:text-gray-200 text-gray-400 far fa-file-alt text-lg leading-lg mr-2" />{" "}
                   Docs
                 </a>
               </li>
@@ -52,36 +52,36 @@ export default function Navbar(props) {
               </li>
               <li className="flex items-center">
                 <Link
-                  className="lg:text-white lg:hover:text-blueGray-200 text-blueGray-700 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
+                  className="lg:text-white lg:hover:text-gray-200 text-gray-700 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
                   to=""
                     onClick={(e) => e.preventDefault()}
                   
                 >
-                  <i className="lg:text-blueGray-200 text-blueGray-400 fab fa-facebook text-lg leading-lg " />
+                  <i className="lg:text-gray-200 text-gray-400 fab fa-facebook text-lg leading-lg " />
                   <span className="lg:hidden inline-block ml-2">Share</span>
                 </Link>
               </li>
 
               <li className="flex items-center">
                 <Link
-                  className="lg:text-white lg:hover:text-blueGray-200 text-blueGray-700 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
+                  className="lg:text-white lg:hover:text-gray-200 text-gray-700 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
                   to=""
                     onClick={(e) => e.preventDefault()}
                   
                 >
-                  <i className="lg:text-blueGray-200 text-blueGray-400 fab fa-twitter text-lg leading-lg " />
+                  <i className="lg:text-gray-200 text-gray-400 fab fa-twitter text-lg leading-lg " />
                   <span className="lg:hidden inline-block ml-2">Tweet</span>
                 </Link>
               </li>
 
               <li className="flex items-center">
                 <Link
-                  className="lg:text-white lg:hover:text-blueGray-200 text-blueGray-700 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
+                  className="lg:text-white lg:hover:text-gray-200 text-gray-700 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
                   to=""
                     onClick={(e) => e.preventDefault()}
                   
                 >
-                  <i className="lg:text-blueGray-200 text-blueGray-400 fab fa-github text-lg leading-lg " />
+                  <i className="lg:text-gray-200 text-gray-400 fab fa-github text-lg leading-lg " />
                   <span className="lg:hidden inline-block ml-2">Star</span>
                 </Link>
               </li>

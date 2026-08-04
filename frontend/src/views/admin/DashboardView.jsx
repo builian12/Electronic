@@ -1,84 +1,179 @@
-import React from 'react';
-
-const stats = [
-  { title: 'Ventas del mes', value: '$ 8,640', icon: 'fas fa-money-bill-wave', color: 'bg-emerald-500' },
-  { title: 'Productos activos', value: '5', icon: 'fas fa-box', color: 'bg-sky-500' },
-  { title: 'Proveedores', value: '2', icon: 'fas fa-truck', color: 'bg-fuchsia-500' },
-  { title: 'Usuarios', value: '2', icon: 'fas fa-users', color: 'bg-violet-500' },
-];
-
-const recentSales = [
-  { id: 1, client: 'cliente', item: 'Laptop Dell Latitude', total: '$ 1,299.99', status: 'Completado' },
-  { id: 2, client: 'Luis', item: 'Monitor 24', total: '$ 199.50', status: 'Pendiente' },
-  { id: 3, client: 'Ana', item: 'PC Gamer Ryzen', total: '$ 1,799.00', status: 'Completado' },
-];
+import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/api';
 
 export default function DashboardView() {
+  const [stats, setStats] = useState({
+    ventas: 0,
+    totalVentas: 0,
+    productos: 0,
+    proveedores: 0,
+    clientes: 0,
+    usuarios: 0,
+    categorias: 0,
+  });
+  const [recentSales, setRecentSales] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const load = async () => {
+    try {
+      const [ventasRes, productosRes, proveedoresRes, clientesRes, usuariosRes, categoriasRes] = await Promise.all([
+        apiClient.get('ventas/'),
+        apiClient.get('productos/'),
+        apiClient.get('proveedores/'),
+        apiClient.get('clientes/'),
+        apiClient.get('users/'),
+        apiClient.get('categorias/'),
+      ]);
+
+      const ventas = ventasRes.data;
+      const totalVentas = ventas.reduce((sum, v) => sum + parseFloat(v.total_venta || 0), 0);
+
+      setStats({
+        ventas: ventas.length,
+        totalVentas: totalVentas.toFixed(2),
+        productos: productosRes.data.length,
+        proveedores: proveedoresRes.data.length,
+        clientes: clientesRes.data.length,
+        usuarios: usuariosRes.data.length,
+        categorias: categoriasRes.data.length,
+      });
+
+      const sorted = [...ventas].sort((a, b) => new Date(b.fecha_venta) - new Date(a.fecha_venta)).slice(0, 5);
+      setRecentSales(sorted);
+    } catch (err) {
+      console.error('Error al cargar dashboard', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const statCards = [
+    { title: 'Ventas del mes', value: `$${stats.totalVentas}`, icon: 'fas fa-money-bill-wave', color: 'bg-emerald-500' },
+    { title: 'Productos activos', value: stats.productos, icon: 'fas fa-box', color: 'bg-indigo-500' },
+    { title: 'Proveedores', value: stats.proveedores, icon: 'fas fa-truck', color: 'bg-amber-500' },
+    { title: 'Usuarios', value: stats.usuarios, icon: 'fas fa-users', color: 'bg-rose-500' },
+  ];
+
+  const getUsername = (usuario) => {
+    if (usuario && typeof usuario === 'object') return usuario.username;
+    return usuario;
+  };
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-6">
+    <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-2xl">
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
             <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-sky-400">Panel ejecutivo</p>
-              <h1 className="text-3xl font-semibold">Gestión de inventario y ventas</h1>
-              <p className="text-slate-400 mt-2">Control en tiempo real de stock, ventas y clientes.</p>
+              <p className="text-sm uppercase tracking-[0.3em] text-indigo-600 font-semibold">Panel ejecutivo</p>
+              <h1 className="text-3xl font-bold text-gray-900">Gestión de inventario y ventas</h1>
+              <p className="text-gray-500 mt-2">Datos en tiempo real desde PostgreSQL.</p>
             </div>
-            <div className="rounded-2xl border border-sky-700/40 bg-sky-500/10 px-4 py-3 text-sm text-sky-200">
-              <div className="font-semibold">Estado del negocio</div>
-              <div>Operación estable · 24 productos disponibles</div>
+            <div className="rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm text-gray-700">
+              <div className="font-semibold text-indigo-700">Estado del negocio</div>
+              <div>Operación estable · {stats.productos} productos disponibles</div>
             </div>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
-          {stats.map((item) => (
-            <div key={item.title} className="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-lg">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-slate-400 text-sm">{item.title}</p>
-                  <p className="text-2xl font-semibold mt-2">{item.value}</p>
-                </div>
-                <div className={`rounded-2xl p-3 text-white ${item.color}`}>
-                  <i className={item.icon}></i>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="grid xl:grid-cols-[1.3fr_0.7fr] gap-6">
-          <div className="rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-xl">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold">Ventas recientes</h2>
-              <button className="rounded-full border border-slate-700 px-3 py-1 text-sm text-slate-300">Ver todas</button>
-            </div>
-            <div className="space-y-3">
-              {recentSales.map((sale) => (
-                <div key={sale.id} className="flex items-center justify-between rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3">
-                  <div>
-                    <div className="font-medium">{sale.item}</div>
-                    <div className="text-sm text-slate-400">Cliente: {sale.client}</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-semibold">{sale.total}</div>
-                    <div className="text-sm text-emerald-400">{sale.status}</div>
+        {loading ? (
+          <div className="text-center py-20">
+            <i className="fas fa-spinner fa-spin text-3xl text-indigo-600 mb-3"></i>
+            <p className="text-gray-500">Cargando dashboard...</p>
+          </div>
+        ) : (
+          <>
+            <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+              {statCards.map((item) => (
+                <div key={item.title} className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-gray-500 text-sm">{item.title}</p>
+                      <p className="text-2xl font-bold text-gray-900 mt-2">{item.value}</p>
+                    </div>
+                    <div className={`rounded-xl p-3 text-white ${item.color}`}>
+                      <i className={item.icon}></i>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
 
-          <div className="rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-xl">
-            <h2 className="text-xl font-semibold mb-4">Accesos rápidos</h2>
-            <div className="space-y-3 text-sm">
-              <a href="/dashboard/productos" className="block rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3 hover:border-sky-500">Gestionar productos</a>
-              <a href="/dashboard/ventas" className="block rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3 hover:border-sky-500">Ver ventas</a>
-              <a href="/dashboard/proveedores" className="block rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3 hover:border-sky-500">Administrar proveedores</a>
-              <a href="/dashboard/usuarios" className="block rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3 hover:border-sky-500">Administrar usuarios</a>
+            <div className="grid xl:grid-cols-[1.3fr_0.7fr] gap-6">
+              <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-semibold text-gray-900">Ventas recientes</h2>
+                  <span className="badge rounded-full bg-indigo-100 text-indigo-700 px-3 py-1 text-xs font-medium">
+                    {stats.ventas} ventas totales
+                  </span>
+                </div>
+                <div className="space-y-3">
+                  {recentSales.length === 0 ? (
+                    <p className="text-gray-400 text-center py-8">No hay ventas registradas.</p>
+                  ) : (
+                    recentSales.map((sale) => (
+                      <div key={sale.id} className="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+                        <div>
+                          <div className="font-medium text-gray-800">Venta #{sale.id}</div>
+                          <div className="text-sm text-gray-500">
+                            Cliente: {getUsername(sale.usuario)} · {sale.fecha_venta ? new Date(sale.fecha_venta).toLocaleDateString() : '—'}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-semibold text-gray-900">$ {parseFloat(sale.total_venta).toFixed(2)}</div>
+                          <div className={`text-sm font-medium ${sale.estado === 'Completado' ? 'text-emerald-600' : 'text-amber-600'}`}>
+                            {sale.estado}
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">Resumen</h2>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+                    <span className="text-sm text-gray-600"><i className="fas fa-tags mr-2 text-indigo-500"></i>Categorías</span>
+                    <span className="font-bold text-gray-900">{stats.categorias}</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+                    <span className="text-sm text-gray-600"><i className="fas fa-box mr-2 text-indigo-500"></i>Productos</span>
+                    <span className="font-bold text-gray-900">{stats.productos}</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+                    <span className="text-sm text-gray-600"><i className="fas fa-truck mr-2 text-indigo-500"></i>Proveedores</span>
+                    <span className="font-bold text-gray-900">{stats.proveedores}</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+                    <span className="text-sm text-gray-600"><i className="fas fa-address-book mr-2 text-indigo-500"></i>Clientes</span>
+                    <span className="font-bold text-gray-900">{stats.clientes}</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+                    <span className="text-sm text-gray-600"><i className="fas fa-users mr-2 text-indigo-500"></i>Usuarios</span>
+                    <span className="font-bold text-gray-900">{stats.usuarios}</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+                    <span className="text-sm text-gray-600"><i className="fas fa-money-bill-wave mr-2 text-emerald-500"></i>Ventas</span>
+                    <span className="font-bold text-gray-900">{stats.ventas}</span>
+                  </div>
+                </div>
+
+                <h2 className="text-lg font-semibold text-gray-900 mt-6 mb-3">Accesos rápidos</h2>
+                <div className="space-y-2 text-sm">
+                  <a href="/dashboard/productos" className="block rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 hover:border-indigo-300 hover:bg-indigo-50 text-gray-700 transition-colors">Gestionar productos</a>
+                  <a href="/dashboard/ventas" className="block rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 hover:border-indigo-300 hover:bg-indigo-50 text-gray-700 transition-colors">Ver ventas</a>
+                  <a href="/dashboard/proveedores" className="block rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 hover:border-indigo-300 hover:bg-indigo-50 text-gray-700 transition-colors">Administrar proveedores</a>
+                  <a href="/dashboard/clientes" className="block rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 hover:border-indigo-300 hover:bg-indigo-50 text-gray-700 transition-colors">Administrar clientes</a>
+                  <a href="/dashboard/usuarios" className="block rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 hover:border-indigo-300 hover:bg-indigo-50 text-gray-700 transition-colors">Administrar usuarios</a>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
     </div>
   );

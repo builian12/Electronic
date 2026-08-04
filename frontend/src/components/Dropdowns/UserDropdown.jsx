@@ -1,11 +1,14 @@
 import React from "react";
 import { createPopper } from "@popperjs/core";
+import { useHistory } from "react-router-dom";
+import { logout } from "../../services/authService";
 
 const UserDropdown = () => {
-  // dropdown props
   const [dropdownPopoverShow, setDropdownPopoverShow] = React.useState(false);
   const btnDropdownRef = React.createRef();
   const popoverDropdownRef = React.createRef();
+  const history = useHistory();
+
   const openDropdownPopover = () => {
     createPopper(btnDropdownRef.current, popoverDropdownRef.current, {
       placement: "bottom-start",
@@ -15,10 +18,18 @@ const UserDropdown = () => {
   const closeDropdownPopover = () => {
     setDropdownPopoverShow(false);
   };
+
+  const handleLogout = () => {
+    logout();
+    history.push('/auth/login');
+  };
+
+  const username = localStorage.getItem('username') || 'usuario';
+
   return (
     <>
       <a
-        className="text-blueGray-500 block"
+        className="text-gray-500 block"
         href="#pablo"
         ref={btnDropdownRef}
         onClick={(e) => {
@@ -27,59 +38,43 @@ const UserDropdown = () => {
         }}
       >
         <div className="items-center flex">
-          <span className="w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full">
-            <img
-              alt="..."
-              className="w-full rounded-full align-middle border-none shadow-lg"
-              src={"/assets/img/team-1-800x800.jpg"}
-            />
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-600 to-blue-500 text-white flex items-center justify-center shadow-md border-2 border-white">
+            <i className="fas fa-user-circle text-lg"></i>
+          </div>
+          <span className="ml-2 text-sm font-medium text-gray-700 hidden lg:inline-block">
+            {username}
           </span>
+          <i className="fas fa-chevron-down text-xs text-gray-400 ml-1 hidden lg:inline-block"></i>
         </div>
       </a>
       <div
         ref={popoverDropdownRef}
         className={
           (dropdownPopoverShow ? "block " : "hidden ") +
-          "bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48"
+          "bg-white text-base z-50 float-left py-2 list-none text-left rounded-xl shadow-lg min-w-48 border border-gray-100"
         }
       >
         <a
           href="#pablo"
-          className={
-            "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
-          }
+          className="text-sm py-2 px-4 font-medium block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-gray-50"
           onClick={(e) => e.preventDefault()}
         >
-          Action
+          <i className="fas fa-user mr-2 text-gray-400"></i> Mi perfil
         </a>
         <a
           href="#pablo"
-          className={
-            "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
-          }
+          className="text-sm py-2 px-4 font-medium block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-gray-50"
           onClick={(e) => e.preventDefault()}
         >
-          Another action
+          <i className="fas fa-store mr-2 text-gray-400"></i> Ver tienda
         </a>
-        <a
-          href="#pablo"
-          className={
-            "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
-          }
-          onClick={(e) => e.preventDefault()}
+        <div className="h-0 my-2 border border-solid border-gray-100" />
+        <button
+          onClick={handleLogout}
+          className="text-sm py-2 px-4 font-medium block w-full whitespace-nowrap bg-transparent text-red-500 hover:bg-red-50 text-left"
         >
-          Something else here
-        </a>
-        <div className="h-0 my-2 border border-solid border-blueGray-100" />
-        <a
-          href="#pablo"
-          className={
-            "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
-          }
-          onClick={(e) => e.preventDefault()}
-        >
-          Seprated link
-        </a>
+          <i className="fas fa-sign-out-alt mr-2"></i> Cerrar sesión
+        </button>
       </div>
     </>
   );

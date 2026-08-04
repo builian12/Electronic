@@ -1,0 +1,60 @@
+GUÍA PARA CONFIGURAR EL PROYECTO EN RED LOCAL (SWITCH)
+
+Esta guía explica cómo conectar todas las laptops mediante un switch básico para la presentación de tu proyecto. En este escenario, cada laptop tendrá el código del frontend ejecutándose localmente, pero todas apuntarán a la base de datos y backend de tu laptop Fedora.
+
+====================================================
+PASO 1: CONFIGURAR LA RED (IPs ESTÁTICAS)
+====================================================
+Dado que un switch básico no asigna IPs, deben configurarlas manualmente:
+
+1. Conecta todas las laptops al switch usando cables Ethernet.
+2. En tu laptop Fedora (El Servidor Central):
+   - Ve a la configuración de Red (Ethernet).
+   - Configura la IPv4 de forma Manual.
+   - Dirección IP: 192.168.1.10
+   - Máscara de subred: 255.255.255.0
+   - Puerta de enlace (Gateway): Déjalo en blanco o pon 192.168.1.1
+
+3. En las laptops de tus compañeros (Clientes):
+   - Configura la IPv4 de forma Manual.
+   - Dirección IP: 192.168.1.11 (a la siguiente 192.168.1.12, y así sucesivamente).
+   - Máscara de subred: 255.255.255.0
+
+====================================================
+PASO 2: PREPARAR EL PROYECTO (YA HECHO EN EL CÓDIGO)
+====================================================
+Ya modifiqué tu código con dos cosas esenciales:
+1. En backend/backend/settings.py: Habilitamos CORS_ALLOW_ALL_ORIGINS = True para que cualquier laptop pueda hacer peticiones a tu servidor.
+2. En frontend/src/services/api.jsx: Cambié la URL para que apunte a http://192.168.1.10:8000/api/ en lugar de localhost. 
+
+IMPORTANTE: Si por alguna razón tu Fedora no tiene la IP 192.168.1.10, diles a tus compañeros que abran su código (frontend/src/services/api.jsx) y cambien esa IP por la que realmente tenga tu Fedora.
+
+====================================================
+PASO 3: EJECUTAR EL SERVIDOR (SOLO EN TU FEDORA)
+====================================================
+En tu laptop Fedora harás lo siguiente:
+
+1. Asegúrate de tener PostgreSQL corriendo y que tu base de datos "django_rest_bdd" exista.
+2. Abre la terminal, entra a la carpeta "backend" y activa tu entorno virtual.
+3. EJECUTA EL BACKEND ASÍ:
+   python manage.py runserver 0.0.0.0:8000
+   
+   (El "0.0.0.0" es crucial, le dice a Django que acepte conexiones de toda la red, no solo tuyas).
+
+4. ABRE LOS PUERTOS EN EL FIREWALL DE FEDORA:
+   Abre otra terminal y ejecuta:
+   sudo firewall-cmd --zone=public --add-port=8000/tcp --permanent
+   sudo firewall-cmd --reload
+
+====================================================
+PASO 4: EJECUTAR EL CLIENTE (EN TODAS LAS LAPTOS)
+====================================================
+En las laptops de tus compañeros (y en la tuya también, si quieres probar el frontend):
+
+1. Abre la terminal, entra a la carpeta "frontend".
+2. Ejecuta:
+   npm install
+   npm run dev
+3. Abre el navegador y entra a: http://localhost:5173
+
+¡Listo! Cada quien verá el sistema en su propio localhost, pero cuando guarden un dato, este viajará por la red hasta el puerto 8000 de tu Fedora, y se guardará en tu PostgreSQL. Todos verán los datos actualizados.
