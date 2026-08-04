@@ -9,7 +9,8 @@ export default function SuppliersView() {
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
-  const load = async () => {
+// #DOC CRUD PROVEEDORES - CARGA DE DATOS
+const load = async () => {
     try {
       const res = await apiClient.get('proveedores/');
       setSuppliers(res.data);
