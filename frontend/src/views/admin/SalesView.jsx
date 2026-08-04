@@ -12,7 +12,8 @@ export default function SalesView() {
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
-  const load = async () => {
+// #DOC CRUD VENTAS - CARGA DE DATOS
+const load = async () => {
     try {
       const [ventasRes, prodRes, userRes] = await Promise.all([
         apiClient.get('ventas/'),
