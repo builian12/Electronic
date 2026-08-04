@@ -1,97 +1,81 @@
 import os
 import django
-from datetime import date
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
 django.setup()
 
 from django.contrib.auth.models import User
-from disquera.models import Disquera
-from artista.models import Artista
-from album.models import Album
-from cancion.models import Cancion
-from genero.models import Genero
+from categorias.models import Categoria
+from productos.models import Producto
+from ventas.models import Venta, DetalleVenta
+
 
 def populate():
-    print("Creando Usuarios...")
-    for i in range(1, 6):
-        User.objects.get_or_create(
-            username=f'usuario{i}',
+    print("Creando usuarios...")
+    admin, _ = User.objects.get_or_create(username='admin')
+    admin.set_password('Admin123!')
+    admin.is_superuser = True
+    admin.is_staff = True
+    admin.save()
+
+    cliente, _ = User.objects.get_or_create(username='cliente')
+    cliente.set_password('Cliente123!')
+    cliente.save()
+
+    print("Creando categorías...")
+    categorias = [
+        ("Laptops", "Equipos portátiles"),
+        ("Desktop", "Computadoras de escritorio"),
+        ("Periféricos", "Monitores, teclados y mouse")
+    ]
+    for nombre, descripcion in categorias:
+        Categoria.objects.get_or_create(nombre=nombre, defaults={"descripcion": descripcion, "estado": True})
+
+    print("Creando productos...")
+    laptops = Categoria.objects.get(nombre='Laptops')
+    desktops = Categoria.objects.get(nombre='Desktop')
+    perifericos = Categoria.objects.get(nombre='Periféricos')
+
+    productos = [
+        ("Laptop Dell Latitude", "Ideal para oficina y negocio", 1299.99, 8, laptops),
+        ("PC Gamer Ryzen", "Diseño y gaming", 1799.00, 5, desktops),
+        ("Monitor 24", "Pantalla Full HD", 199.50, 15, perifericos),
+    ]
+
+    for nombre, descripcion, precio, stock, categoria in productos:
+        Producto.objects.get_or_create(
+            nombre=nombre,
             defaults={
-                'email': f'usuario{i}@musica.com',
-                'first_name': f'Nombre{i}',
-                'last_name': f'Apellido{i}'
-            }
-        )
-        user = User.objects.get(username=f'usuario{i}')
-        user.set_password('123456')
-        user.save()
-        
-    print("Creando Generos...")
-    generos_nombres = ['Rock', 'Pop', 'Jazz', 'Hip Hop', 'Electrónica']
-    for gen in generos_nombres:
-        Genero.objects.get_or_create(
-            nombre=gen,
-            defaults={
-                'descripcion': f'Descripción del género {gen}',
-                'estado': True
-            }
-        )
-        
-    print("Creando Disqueras...")
-    for i in range(1, 6):
-        Disquera.objects.get_or_create(
-            nombre=f'Disquera Records {i}',
-            defaults={
-                'pais_origen': 'Estados Unidos' if i % 2 == 0 else 'Reino Unido',
-                'anio_fundacion': 1990 + i,
-                'email_contacto': f'contacto@disquerarecords{i}.com',
-                'estado': True
-            }
-        )
-        
-    print("Creando Artistas...")
-    generos = ['Rock', 'Pop', 'Jazz', 'Hip Hop', 'Electrónica']
-    for i in range(1, 6):
-        Artista.objects.get_or_create(
-            nombre_artistico=f'Artista Mágico {i}',
-            defaults={
-                'genero_principal': generos[i-1],
-                'biografia': f'Biografía increíble del artista mágico número {i}.',
-                'anio_inicio': 2005 + i,
-                'estado': True
+                "descripcion": descripcion,
+                "precio_unitario": precio,
+                "stock_disponible": stock,
+                "categoria": categoria,
+                "estado": True,
             }
         )
 
-    print("Creando Álbumes...")
-    for i in range(1, 6):
-        disquera = Disquera.objects.get(nombre=f'Disquera Records {i}')
-        Album.objects.get_or_create(
-            titulo=f'Álbum Épico Vol. {i}',
-            defaults={
-                'fecha_lanzamiento': date(2020 + i, 1, i * 2),
-                'portada_url': f'https://via.placeholder.com/300/1DB954/FFFFFF?text=Album+{i}',
-                'disquera': disquera,
-                'estado': True
-            }
-        )
+    print("Creando ventas de ejemplo...")
+    venta, _ = Venta.objects.get_or_create(
+        id=1,
+        defaults={
+            "usuario": cliente,
+            "total_venta": 1299.99,
+            "estado": "Completado",
+        },
+    )
+    producto = Producto.objects.get(nombre='Laptop Dell Latitude')
+    DetalleVenta.objects.get_or_create(
+        venta=venta,
+        producto=producto,
+        defaults={
+            "cantidad": 1,
+            "precio_unitario_historico": 1299.99,
+            "subtotal": 1299.99,
+        },
+    )
 
-    print("Creando Canciones...")
-    for i in range(1, 6):
-        album = Album.objects.get(titulo=f'Álbum Épico Vol. {i}')
-        artista = Artista.objects.get(nombre_artistico=f'Artista Mágico {i}')
-        Cancion.objects.get_or_create(
-            titulo=f'Canción Número {i}',
-            defaults={
-                'duracion_segundos': 180 + (i * 15),
-                'precio': 1.99,
-                'album': album,
-                'artista': artista,
-                'estado': True
-            }
-        )
-        
-    print("¡Base de datos POBLADA CON TEMÁTICA MUSICAL exitosamente!")
+    print("Datos de negocio cargados correctamente.")
+
 
 if __name__ == '__main__':
     populate()
