@@ -58,7 +58,8 @@ const statCards = [
     { title: 'Usuarios', value: stats.usuarios, icon: 'fas fa-users', color: 'bg-rose-500' },
   ];
 
-  const getUsername = (usuario) => {
+ // #DOC DASHBOARD - NOMBRE DE USUARIO EN VENTA
+const getUsername = (usuario) => {
     if (usuario && typeof usuario === 'object') return usuario.username;
     return usuario;
   };
