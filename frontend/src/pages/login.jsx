@@ -32,7 +32,7 @@ export default function Login() {
             <h1 className="text-3xl font-bold tracking-tight mb-2 text-green-400">
               <i className="fas fa-music mr-2"></i> Iniciar sesión
             </h1>
-            <p className="text-sm text-green-400 font-medium">Ingresa tus credenciales para continuar</p>
+            <p className="text-sm text-green-400 font-medium">Ingrese sus credenciales para continuar</p>
           </div>
           
           <form onSubmit={handleLogin} className="space-y-6">
