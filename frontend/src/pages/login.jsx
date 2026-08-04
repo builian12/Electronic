@@ -19,7 +19,7 @@ export default function Login() {
       await login(username, password);
       history.push("/dashboard");
     } catch (err) {
-      setError("El Usuario o contraseña incorrectos");
+      setError("Usuario o contraseña incorrectos");
       setLoading(false);
     }
   };
@@ -32,7 +32,7 @@ export default function Login() {
             <h1 className="text-3xl font-bold tracking-tight mb-2 text-green-400">
               <i className="fas fa-music mr-2"></i> Iniciar sesión
             </h1>
-            <p className="text-sm text-green-400 font-medium">Ingrese sus credenciales para continuar</p>
+            <p className="text-sm text-green-400 font-medium">Ingresa tus credenciales para continuar</p>
           </div>
           
           <form onSubmit={handleLogin} className="space-y-6">
@@ -91,7 +91,7 @@ export default function Login() {
           
           <div className="mt-8 text-center border-t border-gray-800 pt-6">
             <p className="text-green-500 text-sm font-medium">
-              ¿No cuenta con una cuenta? <Link to="/auth/register" className="text-green-400 hover:text-green-300 underline transition-colors">Registrarse</Link>
+              ¿No tienes una cuenta? <Link to="/auth/register" className="text-green-400 hover:text-green-300 underline transition-colors">Regístrate</Link>
             </p>
           </div>
         </div>
