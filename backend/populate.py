@@ -13,15 +13,17 @@ from proveedores.models import Proveedor
 
 def populate():
     print("Creando usuarios...")
-    admin, _ = User.objects.get_or_create(username='admin')
-    admin.set_password('Admin123!')
-    admin.is_superuser = True
-    admin.is_staff = True
-    admin.save()
+    admin, created_admin = User.objects.get_or_create(username='admin')
+    if created_admin or not admin.check_password('Admin123!'):
+        admin.set_password('Admin123!')
+        admin.is_superuser = True
+        admin.is_staff = True
+        admin.save()
 
-    cliente, _ = User.objects.get_or_create(username='cliente')
-    cliente.set_password('Cliente123!')
-    cliente.save()
+    cliente, created_cliente = User.objects.get_or_create(username='cliente')
+    if created_cliente or not cliente.check_password('Cliente123!'):
+        cliente.set_password('Cliente123!')
+        cliente.save()
 
     print("Creando categorías...")
     categorias = [

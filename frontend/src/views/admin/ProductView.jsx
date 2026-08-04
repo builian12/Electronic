@@ -184,7 +184,6 @@ export default function ProductView() {
             </thead>
             <tbody>
               {products.map((p) => (
-                {/* CAMBIO CRUD PRODUCTOS: fila de producto en la tabla */}
                 <tr key={p.id} className="border-t border-gray-200 bg-gray-50/70">
                   {/* CAMBIO CRUD PRODUCTOS: identificador del registro */}
                   <td className="px-4 py-3">{p.id}</td>
@@ -248,8 +247,3 @@ export default function ProductView() {
 // CAMBIO EXTRA 20260804021853 #30
 // CAMBIO EXTRA 20260804021854 #31
 // CAMBIO EXTRA 20260804021854 #32
-// CAMBIO EXTRA 20260804021854 #33
-// CAMBIO EXTRA 20260804021854 #34
-// CAMBIO EXTRA 20260804021855 #35
-// CAMBIO EXTRA 20260804021855 #36
-// CAMBIO EXTRA 20260804021855 #37

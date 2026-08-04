@@ -1,6 +1,11 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api/';
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://192.168.1.10:8000/api/';
+
+export const loginUser = async (username, password) => {
+  const response = await axios.post(`${API_URL}token/`, { username, password });
+  return response.data;
+};
 
 const apiClient = axios.create({
   baseURL: API_URL,

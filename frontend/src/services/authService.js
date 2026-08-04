@@ -5,11 +5,14 @@ export const login = async (username, password) => {
     username,
     password,
   });
+
   if (response.data.access) {
     localStorage.setItem("token", response.data.access);
+    localStorage.setItem("refreshToken", response.data.refresh || "");
     localStorage.setItem("username", username);
     localStorage.setItem("role", username === "admin" ? "admin" : "cliente");
   }
+
   return response.data;
 };
 
