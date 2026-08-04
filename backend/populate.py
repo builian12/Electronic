@@ -139,7 +139,7 @@ def populate():
             defaults={"cantidad": cant, "precio_unitario_historico": p.precio_unitario, "subtotal": p.precio_unitario * cant},
         )
 
-    print("Datos de negocio cargados correctamente.")
+    print("Datos de negocio guardados correctamente.")
 
 
 if __name__ == '__main__':
