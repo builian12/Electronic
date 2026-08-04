@@ -27,6 +27,6 @@ for table in legacy_tables:
 # Limpiar usuarios heredados y dejar solo los nuevos usuarios relevantes
 for user in User.objects.exclude(username__in=['admin', 'cliente']):
     user.delete()
-    print(f'Usuario Eliminado: {user.username}')
+    print(f'Eliminado usuario: {user.username}')
 
-print('Limpieza finalizada. Solo quedan los datos del nuevo sistema.')
+print('Limpieza finalizada. Permanecerán solo los datos del nuevo sistema.')
