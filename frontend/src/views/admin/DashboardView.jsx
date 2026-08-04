@@ -81,7 +81,8 @@ const getUsername = (usuario) => {
           </div>
         </div>
 
-        {loading ? (
+// #TODO DASHBOARD - Pendiente: agregar filtro de fechas para ventas recientes
+{loading ? (
           <div className="text-center py-20">
             <i className="fas fa-spinner fa-spin text-3xl text-indigo-600 mb-3"></i>
             <p className="text-gray-500">Cargando dashboard...</p>
