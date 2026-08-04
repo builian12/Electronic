@@ -50,7 +50,8 @@ const load = async () => {
 
   useEffect(() => { load(); }, []);
 
-  const statCards = [
+// #DOC DASHBOARD - TARJETAS DE RESUMEN
+const statCards = [
     { title: 'Ventas del mes', value: `$${stats.totalVentas}`, icon: 'fas fa-money-bill-wave', color: 'bg-emerald-500' },
     { title: 'Productos activos', value: stats.productos, icon: 'fas fa-box', color: 'bg-indigo-500' },
     { title: 'Proveedores', value: stats.proveedores, icon: 'fas fa-truck', color: 'bg-amber-500' },
