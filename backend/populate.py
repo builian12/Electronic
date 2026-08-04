@@ -29,7 +29,7 @@ def populate():
         ("Desktop", "Computadoras de escritorio y torres"),
         ("Periféricos", "Monitores, teclados, mouse y más"),
         ("Componentes", "Procesadores, RAM, discos y tarjetas"),
-        ("Redes", "Routers, switches y access points"),
+        ("Redes", "Routers, Switches y access points"),
         ("Impresoras", "Impresoras láser y de tinta"),
     ]
     for nombre, descripcion in categorias:
