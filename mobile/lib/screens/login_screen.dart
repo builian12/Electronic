@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/api_service.dart';
-import '../services/session_service.dart';
-import 'home_screen.dart';
+import 'products_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,8 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscure = true;
 
   Future<void> _login() async {
-    if (_usernameController.text.trim().isEmpty ||
-        _passwordController.text.isEmpty) {
+    if (_usernameController.text.trim().isEmpty || _passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Ingresa usuario y contraseña')),
       );
@@ -26,22 +25,26 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     setState(() => _loading = true);
-    final result = await ApiService.login(
-      _usernameController.text.trim(),
+    final normalizedUsername = _usernameController.text.trim().toLowerCase();
+    final token = await ApiService.login(
+      normalizedUsername,
       _passwordController.text.trim(),
     );
 
-    if (result.success && result.token != null) {
-      final username = _usernameController.text.trim();
-      final isAdmin = result.isAdmin;
-      await SessionService.saveSession(result.token!, username, isAdmin);
+    if (token != null) {
+      final prefs = await SharedPreferences.getInstance();
+      final isAdmin = normalizedUsername == 'admin';
+      await prefs.setString('token', token);
+      await prefs.setString('username', normalizedUsername);
+      await prefs.setString('role', isAdmin ? 'admin' : 'cliente');
+      await prefs.setBool('isAdmin', isAdmin);
 
       if (!mounted) return;
-      Navigator.of(context).pushReplacement(
+      Navigator.pushReplacement(
+        context,
         MaterialPageRoute(
-          builder: (_) => HomeScreen(
-            token: result.token!,
-            username: username,
+          builder: (_) => ProductsScreen(
+            token: token,
             isAdmin: isAdmin,
           ),
         ),
@@ -50,10 +53,9 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
       setState(() => _loading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result.error ?? 'Error al iniciar sesión'),
+        const SnackBar(
+          content: Text('Credenciales inválidas. Usa admin/Admin123! o cliente/Cliente123!'),
           backgroundColor: Colors.red,
-          duration: const Duration(seconds: 5),
         ),
       );
     }
@@ -76,6 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Logo
               Container(
                 width: 90,
                 height: 90,
@@ -88,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.indigo.withOpacity(0.3),
+                      color: Colors.indigo.withValues(alpha: 0.3),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),
@@ -100,14 +103,19 @@ class _LoginScreenState extends State<LoginScreen> {
               const Text(
                 'Electronic',
                 style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87),
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
               const SizedBox(height: 8),
-              const Text('Sistema de gestión de inventario',
-                  style: TextStyle(color: Colors.grey, fontSize: 14)),
+              const Text(
+                'Sistema de gestión de inventario',
+                style: TextStyle(color: Colors.grey, fontSize: 14),
+              ),
               const SizedBox(height: 40),
+
+              // Card de login
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
@@ -117,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   border: Border.all(color: Colors.grey.shade200),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -128,36 +136,31 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     const Text(
                       'Iniciar sesión',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.black87),
                     ),
                     const SizedBox(height: 20),
+
+                    // Usuario
                     TextField(
                       controller: _usernameController,
                       decoration: const InputDecoration(
                         labelText: 'Usuario',
-                        prefixIcon:
-                            Icon(Icons.person_outline, color: Colors.grey),
+                        prefixIcon: Icon(Icons.person_outline, color: Colors.grey),
                         border: OutlineInputBorder(),
                       ),
                       textInputAction: TextInputAction.next,
                     ),
                     const SizedBox(height: 16),
+
+                    // Contraseña
                     TextField(
                       controller: _passwordController,
                       obscureText: _obscure,
                       decoration: InputDecoration(
                         labelText: 'Contraseña',
-                        prefixIcon:
-                            const Icon(Icons.lock_outline, color: Colors.grey),
+                        prefixIcon: const Icon(Icons.lock_outline, color: Colors.grey),
                         suffixIcon: IconButton(
-                          icon: Icon(
-                              _obscure
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
-                              color: Colors.grey),
+                          icon: Icon(_obscure ? Icons.visibility_off : Icons.visibility, color: Colors.grey),
                           onPressed: () => setState(() => _obscure = !_obscure),
                         ),
                         border: const OutlineInputBorder(),
@@ -165,6 +168,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       onSubmitted: (_) => _login(),
                     ),
                     const SizedBox(height: 24),
+
+                    // Botón
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
@@ -173,16 +178,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           backgroundColor: Colors.indigo,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           elevation: 3,
                         ),
                         icon: _loading
                             ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                    color: Colors.white, strokeWidth: 2),
+                                width: 20, height: 20,
+                                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                               )
                             : const Icon(Icons.login),
                         label: Text(_loading ? 'Ingresando...' : 'Entrar'),
@@ -191,6 +193,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
               ),
+
+              // Credenciales demo
               const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.all(16),
@@ -201,22 +205,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 child: const Column(
                   children: [
-                    Text('Credenciales de prueba',
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey)),
+                    Text('Credenciales de prueba', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.grey)),
                     SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Admin: admin / Admin123!',
-                            style:
-                                TextStyle(fontSize: 12, color: Colors.indigo)),
+                        Text('Admin: admin / Admin123!', style: TextStyle(fontSize: 12, color: Colors.indigo)),
                         SizedBox(width: 16),
-                        Text('Cliente: cliente / Cliente123!',
-                            style:
-                                TextStyle(fontSize: 12, color: Colors.green)),
+                        Text('Cliente: cliente / Cliente123!', style: TextStyle(fontSize: 12, color: Colors.green)),
                       ],
                     ),
                   ],
