@@ -9,27 +9,23 @@ class ApiService {
 
   /// Resultado del login con información detallada del error.
   static Future<LoginResult> login(String username, String password) async {
+    final payload = jsonEncode({'username': username, 'password': password});
+    final headers = {'Content-Type': 'application/json'};
+
     try {
       final response = await http
           .post(
             Uri.parse('$baseUrl/token/'),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({'username': username, 'password': password}),
+            headers: headers,
+            body: payload,
           )
           .timeout(_timeout);
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final token = data['access'] as String?;
-        if (token != null) {
-          return LoginResult.success(token);
-        }
-        return LoginResult.error('Respuesta inesperada del servidor');
-      } else if (response.statusCode == 401) {
-        return LoginResult.error('Credenciales incorrectas');
-      } else {
-        return LoginResult.error('Error del servidor (HTTP ${response.statusCode})');
+      if (response.statusCode == 404) {
+        return await _loginWithFallback(username, password);
       }
+
+      return _parseLoginResponse(response);
     } on http.ClientException {
       return LoginResult.error(
         'No se pudo conectar al servidor. Verifica que estés en la misma red y que el backend esté corriendo.',
@@ -39,7 +35,58 @@ class ApiService {
         'Error de conexión: $e. Verifica que el celular y el servidor estén en la misma red.',
       );
     }
+  }
 
+  static Future<LoginResult> _loginWithFallback(String username, String password) async {
+    try {
+      final response = await http
+          .post(
+            Uri.parse('$baseUrl/login/'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'username': username, 'password': password}),
+          )
+          .timeout(_timeout);
+
+      return _parseLoginResponse(response);
+    } on http.ClientException {
+      return LoginResult.error(
+        'No se pudo conectar al servidor en el endpoint de respaldo. Verifica que el backend esté corriendo y la red esté bien configurada.',
+      );
+    } catch (e) {
+      return LoginResult.error(
+        'Error de conexión en endpoint de respaldo: $e. Verifica que el celular y el servidor estén en la misma red.',
+      );
+    }
+  }
+
+  static LoginResult _parseLoginResponse(http.Response response) {
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final token = data['access'] as String?;
+      if (token != null) {
+        final bool isAdmin = (data['is_staff'] as bool?) == true ||
+            (data['is_superuser'] as bool?) == true;
+        return LoginResult.success(token, isAdmin: isAdmin);
+      }
+      return LoginResult.error('Respuesta inesperada del servidor');
+    }
+
+    try {
+      final body = jsonDecode(response.body);
+      if (body is Map && body['detail'] != null) {
+        return response.statusCode == 401
+            ? LoginResult.error(body['detail'].toString())
+            : LoginResult.error('Error del servidor: ${body['detail']}');
+      }
+    } catch (_) {
+      // ignore malformed JSON body
+    }
+
+    if (response.statusCode == 401) {
+      return LoginResult.error('Credenciales incorrectas');
+    }
+
+    return LoginResult.error('Error del servidor (HTTP ${response.statusCode})');
   }
 
   static Future<List<dynamic>> fetchProductos(String token) async {
@@ -142,13 +189,14 @@ class ApiService {
 class LoginResult {
   final bool success;
   final String? token;
+  final bool isAdmin;
   final String? error;
 
-  LoginResult._(this.success, this.token, this.error);
+  LoginResult._(this.success, this.token, this.isAdmin, this.error);
 
-  factory LoginResult.success(String token) =>
-      LoginResult._(true, token, null);
+  factory LoginResult.success(String token, {bool isAdmin = false}) =>
+      LoginResult._(true, token, isAdmin, null);
 
   factory LoginResult.error(String message) =>
-      LoginResult._(false, null, message);
+      LoginResult._(false, null, false, message);
 }

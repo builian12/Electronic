@@ -31,8 +31,8 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (result.success && result.token != null) {
-      final isAdmin = _usernameController.text.trim() == 'admin';
       final username = _usernameController.text.trim();
+      final isAdmin = result.isAdmin;
       await SessionService.saveSession(result.token!, username, isAdmin);
 
       if (!mounted) return;
