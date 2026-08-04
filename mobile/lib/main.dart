@@ -23,7 +23,11 @@ class ElectronicApp extends StatelessWidget {
           fillColor: Colors.grey.shade50,
         ),
       ),
-      home: const LoginScreen(),
+      initialRoute: '/login',
+      routes: {
+        '/login': (_) => const LoginScreen(),
+      },
     );
   }
 }
+

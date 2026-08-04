@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../services/api_service.dart';
-import 'products_screen.dart';
+import '../services/session_service.dart';
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -31,18 +31,17 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (token != null) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', token);
-      await prefs.setString('username', _usernameController.text.trim());
-      await prefs.setBool('isAdmin', _usernameController.text.trim() == 'admin');
+      final isAdmin = _usernameController.text.trim() == 'admin';
+      final username = _usernameController.text.trim();
+      await SessionService.saveSession(token, username, isAdmin);
 
       if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
+      Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => ProductsScreen(
+          builder: (_) => HomeScreen(
             token: token,
-            isAdmin: _usernameController.text.trim() == 'admin',
+            username: username,
+            isAdmin: isAdmin,
           ),
         ),
       );
@@ -74,7 +73,6 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo
               Container(
                 width: 90,
                 height: 90,
@@ -87,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.indigo.withValues(alpha: 0.3),
+                      color: Colors.indigo.withOpacity(0.3),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),
@@ -98,20 +96,12 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 20),
               const Text(
                 'Electronic',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.black87),
               ),
               const SizedBox(height: 8),
-              const Text(
-                'Sistema de gestión de inventario',
-                style: TextStyle(color: Colors.grey, fontSize: 14),
-              ),
+              const Text('Sistema de gestión de inventario', style: TextStyle(color: Colors.grey, fontSize: 14)),
               const SizedBox(height: 40),
 
-              // Card de login
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
@@ -121,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   border: Border.all(color: Colors.grey.shade200),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
+                      color: Colors.black.withOpacity(0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -136,7 +126,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 20),
 
-                    // Usuario
                     TextField(
                       controller: _usernameController,
                       decoration: const InputDecoration(
@@ -148,7 +137,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Contraseña
                     TextField(
                       controller: _passwordController,
                       obscureText: _obscure,
@@ -165,7 +153,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 24),
 
-                    // Botón
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
@@ -190,7 +177,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
 
-              // Credenciales demo
               const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.all(16),

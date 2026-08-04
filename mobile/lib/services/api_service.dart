@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  // Cambia esta IP a la de tu servidor Fedora en red local
+  // IP del servidor Fedora en red local (switch): 192.168.1.10
+  // Si estás en la misma máquina, cambia por: 127.0.0.1
   static const String baseUrl = 'http://192.168.1.10:8000/api';
 
   static Future<String?> login(String username, String password) async {
