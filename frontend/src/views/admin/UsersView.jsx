@@ -9,7 +9,8 @@ export default function UsersView() {
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
-  const load = async () => {
+ // #DOC CRUD USUARIOS - CARGA DE DATOS
+const load = async () => {
     try {
       const res = await apiClient.get('users/');
       setUsers(res.data);
