@@ -1,5 +1,5 @@
 name: electronic_mobile
-description: App móvil Flutter para el sistema Electronic
+description: App móvil Flutter para el sistema Electronic - Tienda de productos electrónicos
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -11,6 +11,8 @@ dependencies:
     sdk: flutter
   http: ^1.1.0
   provider: ^6.0.5
+  shared_preferences: ^2.2.2
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:
