@@ -52,7 +52,8 @@ const handleSave = async () => {
     setShowForm(true);
   };
 
-  const handleDelete = async (id) => {
+// #DOC CRUD PROVEEDORES - ELIMINAR
+const handleDelete = async (id) => {
     if (!confirm('¿Eliminar este proveedor?')) return;
     try {
       await apiClient.delete(`proveedores/${id}/`);
