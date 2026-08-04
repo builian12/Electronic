@@ -44,11 +44,9 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_spectacular',
     'usuarios',
-    'disquera',
-    'artista',
-    'album',
-    'cancion',
-    'genero',
+    'categorias',
+    'productos',
+    'ventas',
 ]
 
 REST_FRAMEWORK = {
