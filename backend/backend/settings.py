@@ -108,7 +108,7 @@ DATABASES = {
         'NAME': os.getenv('DB_NAME', 'Electronic_bdd'),
         'USER': os.getenv('DB_USER', 'grupo3'),
         'PASSWORD': os.getenv('DB_PASSWORD', 'Admin'),
-        'HOST': os.getenv('DB_HOST', '192.168.1.10'),
+        'HOST': os.getenv('DB_HOST', '127.0.0.1'),
         'PORT': os.getenv('DB_PORT', '5432'),
     }
 }

@@ -1,17 +1,46 @@
-# electronic_mobile
+# Mobile app Electronic
 
-A new Flutter project.
+Esta carpeta contiene la aplicación Flutter móvil del sistema Electronic.
 
-## Getting Started
+## Configuración previa
 
-This project is a starting point for a Flutter application.
+Asegúrate de tener instalado Flutter y el SDK correctamente:
 
-A few resources to get you started if this is your first Flutter project:
+```bash
+cd /home/williamllano/Descargas/Electronic/mobile
+../flutter/bin/flutter pub get
+```
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## Ejecutar la app
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Conecta un dispositivo o inicia un emulador y luego:
+
+```bash
+cd /home/williamllano/Descargas/Electronic/mobile
+../flutter/bin/flutter run
+```
+
+## Servidor backend para móviles
+
+La app móvil consume el backend en:
+
+- `http://192.168.1.10:8000/api/token/` para login
+- `http://192.168.1.10:8000/api/productos/`, `.../categorias/`, `.../ventas/`, `.../proveedores/`
+
+### Requisitos de red
+
+1. El servidor Fedora debe ejecutar Django con:
+
+```bash
+cd /home/williamllano/Descargas/Electronic/backend
+./runserver.sh
+```
+
+2. Todos los dispositivos móviles y emuladores deben estar en la misma red local (`192.168.1.x`).
+
+3. Si usas emulador Android, asegúrate de que pueda acceder a la LAN local.
+
+## Credenciales
+
+- Admin: `admin` / `Admin123!`
+- Cliente: `cliente` / `Cliente123!`

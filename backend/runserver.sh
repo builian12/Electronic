@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -e
+cd "$(dirname "$0")"
+
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "ERROR: python3 no está disponible en PATH. Instala Python 3." >&2
+  exit 1
+fi
+
+export DB_HOST="${DB_HOST:-127.0.0.1}"
+echo "Usando DB_HOST=$DB_HOST"
+echo "Iniciando backend Django en 0.0.0.0:8000..."
+python3 manage.py runserver 0.0.0.0:8000
