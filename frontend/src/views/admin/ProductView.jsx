@@ -150,6 +150,7 @@ export default function ProductView() {
                   className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2 outline-none focus:border-indigo-600" />
               </div>
               {/* CAMBIO CRUD PRODUCTOS: estado activo o inactivo */}
+              {/* CAMBIO CRUD PRODUCTOS: control de estado del producto */}
               <div className="flex items-center gap-2">
                 <label className="text-sm text-gray-600">Activo</label>
                 <input type="checkbox" checked={form.estado}
