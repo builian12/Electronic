@@ -25,16 +25,19 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     setState(() => _loading = true);
+    final normalizedUsername = _usernameController.text.trim().toLowerCase();
     final token = await ApiService.login(
-      _usernameController.text.trim(),
+      normalizedUsername,
       _passwordController.text.trim(),
     );
 
     if (token != null) {
       final prefs = await SharedPreferences.getInstance();
+      final isAdmin = normalizedUsername == 'admin';
       await prefs.setString('token', token);
-      await prefs.setString('username', _usernameController.text.trim());
-      await prefs.setBool('isAdmin', _usernameController.text.trim() == 'admin');
+      await prefs.setString('username', normalizedUsername);
+      await prefs.setString('role', isAdmin ? 'admin' : 'cliente');
+      await prefs.setBool('isAdmin', isAdmin);
 
       if (!mounted) return;
       Navigator.pushReplacement(
@@ -42,15 +45,16 @@ class _LoginScreenState extends State<LoginScreen> {
         MaterialPageRoute(
           builder: (_) => ProductsScreen(
             token: token,
-            isAdmin: _usernameController.text.trim() == 'admin',
+            isAdmin: isAdmin,
           ),
         ),
       );
     } else {
+      if (!mounted) return;
       setState(() => _loading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Credenciales inválidas. Prueba con admin / Admin123!'),
+          content: Text('Credenciales inválidas. Usa admin/Admin123! o cliente/Cliente123!'),
           backgroundColor: Colors.red,
         ),
       );

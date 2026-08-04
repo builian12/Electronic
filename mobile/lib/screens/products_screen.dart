@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
+import 'login_screen.dart';
 
 class ProductsScreen extends StatefulWidget {
   final String token;
@@ -15,6 +16,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
   List<dynamic> _productosData = [];
   final Map<int, int> _cart = {};
   bool _buying = false;
+
+  int get _tabCount => widget.isAdmin ? 3 : 2;
+  String get _roleLabel => widget.isAdmin ? 'Administrador' : 'Cliente';
 
   @override
   void initState() {
@@ -80,16 +84,20 @@ class _ProductsScreenState extends State<ProductsScreen> {
     setState(() => _buying = false);
 
     if (success) {
+      if (!mounted) return;
       setState(() => _cart.clear());
       _reload();
-      ScaffoldMessenger.of(context).showSnackBar(
+      final messenger = ScaffoldMessenger.of(context);
+      messenger.showSnackBar(
         SnackBar(
           content: Text('✅ ¡Compra realizada con éxito! Total: \$${total.toStringAsFixed(2)}'),
           backgroundColor: Colors.green,
         ),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
+      if (!mounted) return;
+      final messenger = ScaffoldMessenger.of(context);
+      messenger.showSnackBar(
         const SnackBar(
           content: Text('Error al realizar la compra'),
           backgroundColor: Colors.red,
@@ -101,23 +109,36 @@ class _ProductsScreenState extends State<ProductsScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: _tabCount,
       child: Scaffold(
         backgroundColor: Colors.grey.shade50,
         appBar: AppBar(
           backgroundColor: Colors.indigo,
           foregroundColor: Colors.white,
-          title: const Row(
+          title: Row(
             children: [
-              Icon(Icons.bolt, size: 20),
-              SizedBox(width: 8),
-              Text('Electronic'),
+              const Icon(Icons.bolt, size: 20),
+              const SizedBox(width: 8),
+              const Text('Electronic'),
+              const SizedBox(width: 12),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: widget.isAdmin ? Colors.orange.shade600 : Colors.green.shade600,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  _roleLabel,
+                  style: const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w600),
+                ),
+              ),
             ],
           ),
-          bottom: const TabBar(
+          bottom: TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.store), text: 'Tienda'),
-              Tab(icon: Icon(Icons.receipt), text: 'Ventas'),
+              const Tab(icon: Icon(Icons.store), text: 'Tienda'),
+              const Tab(icon: Icon(Icons.receipt), text: 'Ventas'),
+              if (widget.isAdmin) const Tab(icon: Icon(Icons.admin_panel_settings), text: 'Admin'),
             ],
           ),
         ),
@@ -125,9 +146,10 @@ class _ProductsScreenState extends State<ProductsScreen> {
           children: [
             _buildTienda(),
             _buildVentas(),
+            if (widget.isAdmin) _buildAdminPanel(),
           ],
         ),
-        floatingActionButton: _cartCount > 0
+        floatingActionButton: !widget.isAdmin && _cartCount > 0
             ? FloatingActionButton.extended(
                 backgroundColor: Colors.green,
                 onPressed: _buying
@@ -351,6 +373,65 @@ class _ProductsScreenState extends State<ProductsScreen> {
           },
         );
       },
+    );
+  }
+
+  Widget _buildAdminPanel() {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Panel de administración',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.indigo),
+          ),
+          const SizedBox(height: 12),
+          Card(
+            margin: const EdgeInsets.only(bottom: 12),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: const ListTile(
+              leading: Icon(Icons.people, color: Colors.indigo),
+              title: Text('Gestión de usuarios'),
+              subtitle: Text('Revisa clientes, administra permisos y controla el acceso'),
+            ),
+          ),
+          Card(
+            margin: const EdgeInsets.only(bottom: 12),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: const ListTile(
+              leading: Icon(Icons.storefront, color: Colors.indigo),
+              title: Text('Control de inventario'),
+              subtitle: Text('Actualiza productos, stock y categorías del catálogo'),
+            ),
+          ),
+          Card(
+            margin: const EdgeInsets.only(bottom: 12),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: const ListTile(
+              leading: Icon(Icons.receipt_long, color: Colors.indigo),
+              title: Text('Reportes de ventas'),
+              subtitle: Text('Ver ventas ejecutadas y estados de las órdenes'),
+            ),
+          ),
+          const Spacer(),
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => const LoginScreen()),
+              );
+            },
+            icon: const Icon(Icons.logout),
+            label: const Text('Cerrar sesión'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red.shade600,
+              foregroundColor: Colors.white,
+              minimumSize: const Size.fromHeight(50),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
