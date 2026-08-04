@@ -11,6 +11,8 @@ export default function ProductView() {
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
+  // #DOC CRUD PRODUCTOS - CARGA DE DATOS
+  // Trae productos y categorías desde la API al iniciar el componente
   const load = async () => {
     try {
       const [prodRes, catRes] = await Promise.all([
@@ -26,6 +28,8 @@ export default function ProductView() {
 
   useEffect(() => { load(); }, []);
 
+// #DOC CRUD PRODUCTOS - LIMPIAR FORMULARIO
+  // Reinicia el formulario y cierra el modo edición/creación
   const resetForm = () => {
     setForm({ nombre: '', descripcion: '', precio_unitario: '', stock_disponible: 0, categoria: '', estado: true });
     setEditingId(null);
@@ -48,7 +52,9 @@ export default function ProductView() {
       console.error('Error al guardar producto', err);
     }
   };
-
+  
+// #DOC CRUD PRODUCTOS - EDITAR
+  // Carga los datos del producto seleccionado en el formulario para editarlo
   const handleEdit = (p) => {
     setForm({
       nombre: p.nombre, descripcion: p.descripcion || '',
@@ -60,6 +66,8 @@ export default function ProductView() {
     setShowForm(true);
   };
 
+// #DOC CRUD PRODUCTOS - ELIMINAR
+  // Pide confirmación y elimina el producto de la base de datos
   const handleDelete = async (id) => {
     if (!confirm('¿Eliminar este producto?')) return;
     try {
